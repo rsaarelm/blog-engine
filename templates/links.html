@@ -5,7 +5,9 @@ function showTaggedOnly(requested) {
     const items = document.querySelectorAll('li');
     items.forEach(item => {
         const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
-        const show = requested.every(tag => { return tags.indexOf(tag) != -1 });
+        const show = requested.every(tag => {
+            return tags.some(tag2 => { return tag2 === tag || tag2.startsWith(tag + '/') })
+        });
 
         if (show) {
             item.style.display = 'list-item';
