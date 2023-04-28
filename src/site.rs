@@ -34,9 +34,10 @@ impl Site {
 impl From<input::Site> for Site {
     fn from(site: input::Site) -> Self {
         let posts: Vec<Post> = site.posts.iter().map(From::from).collect();
-        let links: Links = Links {
+        let mut links: Links = Links {
             links: site.links.iter().map(From::from).collect(),
         };
+        links.links.reverse();
 
         Site { posts, links }
     }
@@ -201,7 +202,11 @@ impl<'a> Listing<'a> {
 
         Listing {
             title: title.into(),
-            tag_path: tag.split('/').map(str::to_string).collect(),
+            tag_path: tag
+                .split('/')
+                .filter(|a| !a.trim().is_empty())
+                .map(str::to_string)
+                .collect(),
             posts,
         }
     }

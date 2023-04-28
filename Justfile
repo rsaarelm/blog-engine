@@ -5,3 +5,6 @@ serve:
     @cargo install basic-http-server
     @echo Running test server at http://localhost:4000/
     ~/.cargo/bin/basic-http-server public/
+
+build:
+    cargo run

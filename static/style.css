@@ -1,13 +1,13 @@
 body { font-family: sans-serif; }
-code {
-    font-family: monospace;
+code { font-family: monospace; }
+pre { margin-left:1em; }
+h1 {
+    text-align: center;
+    font-size: 1.5rem;
 }
-pre {
-    margin-left:1.5rem;
-}
-h1 { font-size: 24px; }
-h2 { font-size: 20px; }
-h3 { font-size: 18px; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.125rem; }
+header { text-align: center; }
 body {
     max-width: 40rem;
     margin: 0 auto;
@@ -15,6 +15,11 @@ body {
     padding: 1rem;
     line-height: 1.4;
 }
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; }
 .date { color: gray; font-size: smaller; }
 .tag { color: brown; font-size: smaller; }
 .bookmark { list-style-type: none; }
+.note { margin-left: 1em; }

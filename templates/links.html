@@ -38,21 +38,22 @@ window.onhashchange = function() {
 </script>{% endblock header %}
 
 {% block content %}
-    <div id='header'>
-        <a href="/">home</a> | <a href="/links/">links</a> |
-        <a class="feedbutton" type="application/atom+xml" rel="alternate" href="feed.xml">Atom feed</a>
-    </div>
+<header>
+    <a href="/">posts</a>
+    | links
+    | <a class="feedbutton" type="application/atom+xml" rel="alternate" href="feed.xml">feed</a>
+</header>
 
-    <ul>{% for link in links %}
-        <li class="bookmark" id="{{ link.id }}">
-            <a href="{{ link.url }}" target="_blank">{{ link.title }}</a>
-            {% for seq in link.sequence %}
-            &nbsp;<a href="{{ seq }}", target="_blank">[{{ loop.index + 1 }}]</a>
-            {% endfor %}
-            <br/>
-            <a class="date" href="#{{ link.id }}">{{ link.date }}</a> {% for tag in link.tags %}<a class="tag" href="#tags={{ tag }}">{{ tag }}</a>&nbsp;{% endfor %}
-            <p>{{ link.content|e("none") }}</p>
-        </li>{% endfor %}
-    </ul>
-  </body>
+<ul>{% for link in links %}
+    <li class="bookmark" id="{{ link.id }}">
+        <a href="{{ link.url }}" target="_blank">{{ link.title }}</a>
+        {% for seq in link.sequence %}
+        &nbsp;<a href="{{ seq }}", target="_blank">[{{ loop.index + 1 }}]</a>
+        {% endfor %}
+        <br/>
+        <a class="date" href="#{{ link.id }}">{{ link.date }}</a> {% for tag in link.tags %}<a class="tag" href="#tags={{ tag }}">{{ tag }}</a>&nbsp;{% endfor %}
+        <div class="note">{{ link.content|e("none") }}</div>
+    </li>{% endfor %}
+</ul>
+
 {% endblock content %}
