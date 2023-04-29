@@ -22,4 +22,5 @@ ul {
 .date { color: gray; font-size: smaller; }
 .tag { color: brown; font-size: smaller; }
 .bookmark { list-style-type: none; }
+.bookmarks { padding: 0; }
 .note { margin-left: 1em; }
