@@ -7,7 +7,6 @@
 <header>
     {% if tag_path.len() > 0 %}<a href="/">posts</a>{% else %}posts{% endif %}
     | <a href="/links/">links</a>
-    | <a class="feedbutton" type="application/atom+xml" rel="alternate" href="feed.xml">feed</a>
 </header>
 
 <h1 class="title">
@@ -20,3 +19,5 @@
 </ul>
 
 {% endblock content %}
+
+{% block feed %}feed.xml{% endblock %}

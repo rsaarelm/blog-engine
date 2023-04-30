@@ -41,7 +41,6 @@ window.onhashchange = function() {
 <header>
     <a href="/">posts</a>
     | links
-    | <a class="feedbutton" type="application/atom+xml" rel="alternate" href="feed.xml">feed</a>
 </header>
 
 <ul class="bookmarks">{% for link in links %}
@@ -57,3 +56,5 @@ window.onhashchange = function() {
 </ul>
 
 {% endblock content %}
+
+{% block feed %}feed.xml{% endblock %}
