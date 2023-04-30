@@ -33,6 +33,8 @@ fn main() {
     }
 
     // Tag listings and feeds.
+    util::write(&site.tags, format!("{OUTPUT_PATH}/tags/index.html")).unwrap();
+
     for tag in site.post_tags() {
         let listing = Listing::new(
             format!("{BLOG_TITLE}: {tag}"),

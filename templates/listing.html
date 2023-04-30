@@ -7,6 +7,7 @@
 <header>
     {% if tag_path.len() > 0 %}<a href="/">posts</a>{% else %}posts{% endif %}
     | <a href="/links/">links</a>
+    | <a href="/tags/">tags</a>
 </header>
 
 <h1 class="title">
@@ -17,7 +18,5 @@
   <li><a href="/{{ post.slug|e }}/">{{ post.title }}</a> | {{ post.date }} </li>
   {% endfor %}
 </ul>
-
 {% endblock content %}
-
 {% block feed %}feed.xml{% endblock %}

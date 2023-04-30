@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %} rsaarelm blog: Tags {% endblock title %}
+
+{% block content %}
+
+<header>
+    <a href="/">posts</a>
+    | <a href="/links/">links</a>
+    | tags
+</header>
+
+<h1 class="title">
+  Tags
+</h1>
+<ul>
+  {% for (tag, count) in tags %}
+  <li><a href="{{ tag|e }}/">{{ tag }}</a> ({{ count }})</li>
+  {% endfor %}
+</ul>
+{% endblock content %}

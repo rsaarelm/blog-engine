@@ -1,6 +1,6 @@
 //! Output types that emit templates.
 
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 use askama::Template;
 use serde::Deserialize;
@@ -12,6 +12,7 @@ use crate::{input, util};
 pub struct Site {
     pub posts: Vec<Post>,
     pub links: Links,
+    pub tags: Tags,
 }
 
 impl Site {
@@ -34,12 +35,24 @@ impl Site {
 impl From<input::Site> for Site {
     fn from(site: input::Site) -> Self {
         let posts: Vec<Post> = site.posts.iter().map(From::from).collect();
-        let mut links: Links = Links {
+        let mut links = Links {
             links: site.links.iter().map(From::from).collect(),
         };
         links.links.reverse();
 
-        Site { posts, links }
+        let mut tags: BTreeMap<String, usize> = Default::default();
+        for post in &posts {
+            for tag in &post.tags {
+                let name = tag.to_string();
+                *tags.entry(name).or_insert(0) += 1;
+            }
+        }
+
+        let tags = Tags {
+            tags: tags.into_iter().collect(),
+        };
+
+        Site { posts, links, tags }
     }
 }
 
@@ -93,6 +106,13 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
             },
         }
     }
+}
+
+#[derive(Default, Debug, Template)]
+#[template(path = "tags.html")]
+/// Tags listing
+pub struct Tags {
+    pub tags: Vec<(String, usize)>,
 }
 
 #[derive(Default, Debug, Template)]
