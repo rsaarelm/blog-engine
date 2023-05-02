@@ -3,6 +3,14 @@
 use indexmap::IndexMap;
 use serde::Deserialize;
 
+#[derive(Copy, Clone, Default, Debug, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Format {
+    #[default]
+    Markdown,
+    Outline
+}
+
 #[derive(Default, Debug, Deserialize)]
 pub struct Site {
     pub posts: IndexMap<String, ((PostHeader,), String)>,
@@ -16,6 +24,7 @@ pub struct PostHeader {
     pub date: String,
     pub updated: String,
     pub tags: Vec<String>,
+    pub format: Format,
 }
 
 #[derive(Default, Debug, Deserialize)]

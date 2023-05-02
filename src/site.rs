@@ -1,11 +1,12 @@
 //! Output types that emit templates.
 
 use std::collections::{BTreeMap, HashSet};
+use std::fmt::Write;
 
 use askama::Template;
 use serde::Deserialize;
 
-use crate::{input, util};
+use crate::{input::{self, Format}, util};
 
 #[derive(Default, Debug, Deserialize)]
 #[serde(from = "input::Site")]
@@ -78,7 +79,7 @@ impl Post {
 }
 
 impl From<(&String, &((input::PostHeader,), String))> for Post {
-    fn from((slug, ((data,), markdown)): (&String, &((input::PostHeader,), String))) -> Self {
+    fn from((slug, ((data,), body)): (&String, &((input::PostHeader,), String))) -> Self {
         Post {
             url: format!("{}{}/", crate::WEBSITE, slug),
             slug: slug.clone(),
@@ -98,11 +99,37 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
                 util::EPOCH.to_owned()
             },
             tags: data.tags.clone(),
-            // Convert markdown content to HTML.
-            content: {
-                let mut html = String::new();
-                pulldown_cmark::html::push_html(&mut html, pulldown_cmark::Parser::new(markdown));
-                html
+
+            content: match data.format {
+                Format::Markdown => {
+                    // Convert markdown content to HTML.
+                    let mut html = String::new();
+                    pulldown_cmark::html::push_html(
+                        &mut html,
+                        pulldown_cmark::Parser::new(body),
+                    );
+                    html
+                }
+                Format::Outline => {
+                    fn push(buf: &mut String, outline: &Outline) {
+                        if outline.0.is_empty() {
+                            return;
+                        }
+                        let _ = write!(buf, "<ul class='outline'>");
+                        for ((head,), body) in &outline.0 {
+                            let _ = write!(buf, "<li>{head}");
+                            push(buf, body);
+                            let _ = write!(buf, "</li>");
+                        }
+                        let _ = write!(buf, "</ul>");
+                    }
+                    #[derive(Deserialize)]
+                    struct Outline(Vec<((String,), Outline)>);
+                    let body: Outline = idm::from_str(body).expect("Bad outline body");
+                    let mut ret = String::new();
+                    push(&mut ret, &body);
+                    ret
+                }
             },
         }
     }

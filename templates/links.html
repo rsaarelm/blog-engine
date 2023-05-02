@@ -45,7 +45,7 @@ window.onhashchange = function() {
 </header>
 
 <ul class="bookmarks">{% for link in links %}
-    <li class="bookmark" id="{{ link.id }}">
+    <li style="margin-bottom:4px" class="bookmark" id="{{ link.id }}">
         <a href="{{ link.url }}" target="_blank">{{ link.title }}</a>
         {% for seq in link.sequence %}
         &nbsp;<a href="{{ seq }}", target="_blank">[{{ loop.index + 1 }}]</a>
