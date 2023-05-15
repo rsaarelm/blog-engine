@@ -261,7 +261,7 @@ impl<'a> Listing<'a> {
 
 #[derive(Default, Template)]
 #[template(path = "feed.xml")]
-/// ATOM feed.
+/// Atom feed.
 pub struct Feed {
     title: String,
     updated: String,
