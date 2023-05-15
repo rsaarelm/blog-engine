@@ -1,6 +1,10 @@
 body { font-family: sans-serif; }
 code { font-family: monospace; }
-pre { margin-left:1em; }
+pre {
+    margin-left: 1em;
+    max-width: 100%;
+    overflow-x: auto;
+}
 h1 {
     text-align: center;
     font-size: 1.5rem;
