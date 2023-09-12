@@ -13,6 +13,7 @@
             cargo
             rustc
             rust-analyzer
+            cargo-outdated
             clippy
             rustfmt
             entr
