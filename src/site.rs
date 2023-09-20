@@ -117,7 +117,11 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
                         }
                         let _ = write!(buf, "<ul class='outline'>");
                         for ((head,), body) in &outline.0 {
-                            let _ = write!(buf, "<li>{head}");
+                            if head.is_empty() {
+                                let _ = write!(buf, "<li><br/>");
+                            } else {
+                                let _ = write!(buf, "<li>{head}");
+                            }
                             push(buf, body);
                             let _ = write!(buf, "</li>");
                         }
