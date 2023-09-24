@@ -1,12 +1,34 @@
 use std::{
+    fmt,
     fs::{self, File},
     io::{self, prelude::*},
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use askama::DynTemplate;
+use serde::{Deserialize, Serialize};
 
 pub const EPOCH: &str = "1970-01-01T00:00:00Z";
+
+#[derive(Deserialize)]
+pub struct Outline(pub Vec<((String,), Outline)>);
+
+impl fmt::Display for Outline {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fn print(f: &mut fmt::Formatter<'_>, depth: usize, outline: &Outline) -> fmt::Result {
+            for ((head,), body) in &outline.0 {
+                for _ in 0..depth {
+                    write!(f, "  ")?;
+                }
+                writeln!(f, "{head}")?;
+                print(f, depth + 1, body)?;
+            }
+            Ok(())
+        }
+
+        print(f, 0, self)
+    }
+}
 
 /// Convert a title slug into the corresponding title string.
 ///
@@ -51,7 +73,7 @@ pub fn write(
 }
 
 /// Dump a directory tree into a single IDM expression.
-pub fn read_path(path: impl AsRef<Path>) -> Result<String, std::fmt::Error> {
+pub fn read_directory(path: impl AsRef<Path>) -> Result<String, std::fmt::Error> {
     use std::fmt::Write;
 
     let mut ret = String::new();
@@ -107,6 +129,49 @@ pub fn read_path(path: impl AsRef<Path>) -> Result<String, std::fmt::Error> {
     }
 
     Ok(ret)
+}
+
+/// Write a data structure into a directory tree.
+///
+/// Headlines with a dot in them are interpreted as file names, anything above
+/// them is considered directories.
+pub fn write_directory(root: impl AsRef<Path>, data: &impl Serialize) -> anyhow::Result<()> {
+    let output: String = idm::to_string(data)?;
+
+    // Read into tree
+    let tree: Outline = idm::from_str(&output)?;
+
+    fs::remove_dir_all(&root)?;
+    fs::create_dir_all(&root)?;
+
+    fn write(path: impl AsRef<Path>, outline: &Outline) -> anyhow::Result<()> {
+        for ((head,), body) in &outline.0 {
+            if head.contains('.') {
+                // It's a file. Write it.
+                let path = path.as_ref().join(head);
+                if let Some(dir) = path.parent() {
+                    // It might contain some dirs too so create those first...
+                    fs::create_dir_all(dir)?;
+                }
+                fs::write(path, &body.to_string())?;
+            } else if head.starts_with('_') {
+                // HACK: Allow flattening things around a structural element
+                // if it's prefixed with an underscore.
+                write(&path, body)?;
+            } else {
+                // Treat it as directory.
+                // If the name has slashes, they'll generate deeper subdirs.
+                let path: PathBuf = path.as_ref().join(head);
+                fs::create_dir_all(&path)?;
+                // Recurse into body using the new path.
+                write(path, body)?;
+            }
+        }
+
+        Ok(())
+    }
+
+    write(root, &tree)
 }
 
 pub fn tag_set(tag: &str) -> Vec<&str> {

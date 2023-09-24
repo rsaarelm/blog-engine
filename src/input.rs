@@ -8,7 +8,7 @@ use serde::Deserialize;
 pub enum Format {
     #[default]
     Markdown,
-    Outline
+    Outline,
 }
 
 #[derive(Default, Debug, Deserialize)]

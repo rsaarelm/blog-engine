@@ -10,7 +10,7 @@ pub const FEED_LINK_COUNT: usize = 30;
 const OUTPUT_PATH: &str = "public/";
 
 fn main() {
-    let site_text = util::read_path("site/").expect("Failed to read site data");
+    let site_text = util::read_directory("site/").expect("Failed to read site data");
     let site: Site = idm::from_str(&site_text).expect("Failed to parse site data");
 
     // Clear output dir from any previous stuff.

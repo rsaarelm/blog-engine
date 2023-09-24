@@ -6,7 +6,11 @@ use std::fmt::Write;
 use askama::Template;
 use serde::Deserialize;
 
-use crate::{input::{self, Format}, util};
+use crate::util::Outline;
+use crate::{
+    input::{self, Format},
+    util,
+};
 
 #[derive(Default, Debug, Deserialize)]
 #[serde(from = "input::Site")]
@@ -104,10 +108,7 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
                 Format::Markdown => {
                     // Convert markdown content to HTML.
                     let mut html = String::new();
-                    pulldown_cmark::html::push_html(
-                        &mut html,
-                        pulldown_cmark::Parser::new(body),
-                    );
+                    pulldown_cmark::html::push_html(&mut html, pulldown_cmark::Parser::new(body));
                     html
                 }
                 Format::Outline => {
@@ -127,8 +128,6 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
                         }
                         let _ = write!(buf, "</ul>");
                     }
-                    #[derive(Deserialize)]
-                    struct Outline(Vec<((String,), Outline)>);
                     let body: Outline = idm::from_str(body).expect("Bad outline body");
                     let mut ret = String::new();
                     push(&mut ret, &body);
