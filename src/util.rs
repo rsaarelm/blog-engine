@@ -5,7 +5,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use askama::DynTemplate;
 use serde::{Deserialize, Serialize};
 
 pub const EPOCH: &str = "1970-01-01T00:00:00Z";
@@ -59,17 +58,6 @@ pub fn normalize_date(partial_date: &str) -> String {
         ret.push(c);
     }
     ret
-}
-
-/// Write a template to file.
-pub fn write(
-    value: &dyn DynTemplate,
-    path: impl AsRef<Path>,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let prefix = path.as_ref().parent().ok_or("err")?;
-    fs::create_dir_all(prefix)?;
-    let mut file = File::create(path.as_ref())?;
-    Ok(value.dyn_write_into(&mut file)?)
 }
 
 /// Dump a directory tree into a single IDM expression.
@@ -133,15 +121,22 @@ pub fn read_directory(path: impl AsRef<Path>) -> Result<String, std::fmt::Error>
 
 /// Write a data structure into a directory tree.
 ///
-/// Headlines with a dot in them are interpreted as file names, anything above
-/// them is considered directories.
+/// Headlines with a period in them are interpreted as file names, anything
+/// above them is considered directories. Field names that start with
+/// underscore are flattened and their contents are written into the current
+/// level (like serde-flatten, but serde-flatten does not work well with IDM
+/// since it loses information about the value type).
+///
+/// Caveats are that directory names cannot contain periods and file names
+/// must contain periods.
 pub fn write_directory(root: impl AsRef<Path>, data: &impl Serialize) -> anyhow::Result<()> {
     let output: String = idm::to_string(data)?;
 
     // Read into tree
     let tree: Outline = idm::from_str(&output)?;
 
-    fs::remove_dir_all(&root)?;
+    // Fails if the dir doesn't exist, but this is ok. Ignore the result.
+    let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(&root)?;
 
     fn write(path: impl AsRef<Path>, outline: &Outline) -> anyhow::Result<()> {
@@ -157,7 +152,7 @@ pub fn write_directory(root: impl AsRef<Path>, data: &impl Serialize) -> anyhow:
             } else if head.starts_with('_') {
                 // HACK: Allow flattening things around a structural element
                 // if it's prefixed with an underscore.
-                write(&path, body)?;
+                write(path.as_ref(), body)?;
             } else {
                 // Treat it as directory.
                 // If the name has slashes, they'll generate deeper subdirs.

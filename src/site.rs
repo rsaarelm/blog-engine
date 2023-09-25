@@ -1,67 +1,67 @@
 //! Output types that emit templates.
 
-use std::collections::{BTreeMap, HashSet};
-use std::fmt::Write;
-
-use askama::Template;
-use serde::Deserialize;
-
-use crate::util::Outline;
-use crate::{
-    input::{self, Format},
-    util,
+use std::{
+    collections::{BTreeMap, HashSet},
+    fmt::Write,
 };
 
-#[derive(Default, Debug, Deserialize)]
+use askama::Template;
+use serde::{Deserialize, Serialize};
+use serde_with::SerializeDisplay;
+
+use crate::{
+    input::{self, Format},
+    util::{self, Outline},
+    BLOG_TITLE,
+};
+
+#[derive(Default, Debug, Serialize, Deserialize)]
 #[serde(from = "input::Site")]
 pub struct Site {
-    pub posts: Vec<Post>,
+    // Use the magic underscore name to tell the directory writer to flatten
+    // posts contents into the top level.
+    pub _posts: BTreeMap<String, Post>,
     pub links: Links,
     pub tags: Tags,
-}
 
-impl Site {
-    /// Return full set of tags in the existing posts.
-    pub fn post_tags(&self) -> HashSet<String> {
-        let mut ret: HashSet<String> = Default::default();
-
-        for post in &self.posts {
-            for tag in &post.tags {
-                for tag in util::tag_set(tag) {
-                    ret.insert(tag.to_owned());
-                }
-            }
-        }
-
-        ret
-    }
+    pub _listing: Listing,
 }
 
 impl From<input::Site> for Site {
     fn from(site: input::Site) -> Self {
-        let posts: Vec<Post> = site.posts.iter().map(From::from).collect();
-        let mut links = Links {
+        let posts: BTreeMap<String, Post> = site
+            .posts
+            .iter()
+            .map(|p| {
+                let p = Post::from(p);
+                (format!("{}/index.html", p.slug), p)
+            })
+            .collect();
+        let mut links_page = LinksPage {
             links: site.links.iter().map(From::from).collect(),
         };
-        links.links.reverse();
+        links_page.links.reverse();
+        let links_feed = Feed::new(format!("{BLOG_TITLE}: links"), "links/", &links_page.links);
 
-        let mut tags: BTreeMap<String, usize> = Default::default();
-        for post in &posts {
-            for tag in &post.tags {
-                let name = tag.to_string();
-                *tags.entry(name).or_insert(0) += 1;
-            }
-        }
-
-        let tags = Tags {
-            tags: tags.into_iter().collect(),
+        let links = Links {
+            page: links_page,
+            feed: links_feed,
         };
 
-        Site { posts, links, tags }
+        let tags = Tags::new(posts.values());
+
+        let listing = Listing::new(BLOG_TITLE, "", posts.values());
+
+        Site {
+            _posts: posts,
+            links,
+            tags,
+            _listing: listing,
+        }
     }
 }
 
-#[derive(Clone, Default, Debug, Template)]
+#[derive(Clone, Default, Debug, Template, SerializeDisplay)]
 #[template(path = "post.html")]
 pub struct Post {
     pub url: String,
@@ -75,10 +75,17 @@ pub struct Post {
 }
 
 impl Post {
-    pub fn matches_tag(&self, tag: &str) -> bool {
-        let prefix = format!("{tag}/");
+    /// List concrete and implicit tags for this post.
+    pub fn all_tags(&self) -> HashSet<String> {
+        let mut ret = HashSet::new();
 
-        self.tags.iter().any(|t| t == tag || t.starts_with(&prefix))
+        for tag in &self.tags {
+            for tag in util::tag_set(tag) {
+                ret.insert(tag.to_owned());
+            }
+        }
+
+        ret
     }
 }
 
@@ -138,16 +145,69 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
     }
 }
 
-#[derive(Default, Debug, Template)]
-#[template(path = "tags.html")]
-/// Tags listing
+#[derive(Default, Debug, Serialize)]
+/// Index of all tags.
 pub struct Tags {
+    /// Sub-pages for different tags
+    pub _listings: BTreeMap<String, Listing>,
+    #[serde(rename(serialize = "index.html"))]
+    pub page: TagIndex,
+}
+
+impl Tags {
+    pub fn new<'a>(posts: impl IntoIterator<Item = &'a Post>) -> Self {
+        let mut tags: BTreeMap<String, usize> = Default::default();
+        let mut bins: BTreeMap<String, Vec<&'a Post>> = Default::default();
+
+        for p in posts {
+            for tag in p.all_tags() {
+                // Update tag counts.
+                *tags.entry(tag.to_owned()).or_default() += 1;
+                // Store post entry in bin.
+                bins.entry(tag.to_owned()).or_default().push(p);
+            }
+        }
+
+        let page = TagIndex {
+            tags: tags.into_iter().collect(),
+        };
+
+        let _listings = bins
+            .into_iter()
+            .map(|(name, posts)| {
+                (
+                    name.clone(),
+                    Listing::new(
+                        format!("{BLOG_TITLE}: {name}"),
+                        &format!("tags/{name}/"),
+                        posts,
+                    ),
+                )
+            })
+            .collect();
+
+        Tags { _listings, page }
+    }
+}
+
+#[derive(Default, Debug, Template, SerializeDisplay)]
+#[template(path = "tags.html")]
+pub struct TagIndex {
     pub tags: Vec<(String, usize)>,
 }
 
-#[derive(Default, Debug, Template)]
-#[template(path = "links.html")]
+#[derive(Default, Debug, Serialize)]
+/// Links listing
 pub struct Links {
+    #[serde(rename(serialize = "index.html"))]
+    pub page: LinksPage,
+    #[serde(rename(serialize = "feed.xml"))]
+    pub feed: Feed,
+}
+
+#[derive(Default, Debug, Template, SerializeDisplay)]
+#[template(path = "links.html")]
+pub struct LinksPage {
     pub links: Vec<Link>,
 }
 
@@ -202,6 +262,7 @@ impl From<(&String, &((input::LinkHeader,), String))> for Link {
     }
 }
 
+#[derive(Debug)]
 pub struct FeedEntry {
     pub title: String,
     pub link: String,
@@ -231,28 +292,70 @@ impl From<&Post> for FeedEntry {
     }
 }
 
-#[derive(Default, Template)]
-#[template(path = "listing.html")]
-/// List of articles page.
-pub struct Listing<'a> {
-    title: String,
-    tag_path: Vec<String>,
-    posts: Vec<&'a Post>,
+#[derive(Clone, Default, Debug)]
+pub struct PostEntry {
+    pub slug: String,
+    pub title: String,
+    pub date: String,
 }
 
-impl<'a> Listing<'a> {
-    pub fn new(
+impl From<&Post> for PostEntry {
+    fn from(value: &Post) -> Self {
+        PostEntry {
+            slug: value.slug.clone(),
+            title: value.title.clone(),
+            date: value.date.clone(),
+        }
+    }
+}
+
+#[derive(Default, Debug, Serialize)]
+/// List of articles page.
+pub struct Listing {
+    #[serde(rename(serialize = "index.html"))]
+    page: ListingPage,
+    #[serde(rename(serialize = "feed.xml"))]
+    feed: Feed,
+}
+
+impl Listing {
+    pub fn new<'a>(
         title: impl Into<String>,
-        tag: &str,
+        tag_path: &str,
         posts: impl IntoIterator<Item = &'a Post>,
     ) -> Self {
-        let mut posts: Vec<&'a Post> = posts.into_iter().collect();
-        posts.sort_by_key(|a| &a.date);
+        let title = title.into();
+        let posts: Vec<&Post> = posts.into_iter().collect();
+
+        let page = ListingPage::new(title.clone(), tag_path, posts.clone());
+        let feed = Feed::new(title, tag_path, posts);
+
+        Listing { page, feed }
+    }
+}
+
+#[derive(Default, Debug, Template, SerializeDisplay)]
+#[template(path = "listing.html")]
+/// List of articles page.
+pub struct ListingPage {
+    title: String,
+    tag_path: Vec<String>,
+    posts: Vec<PostEntry>,
+}
+
+impl ListingPage {
+    pub fn new<'a>(
+        title: impl Into<String>,
+        tag_path: &str,
+        posts: impl IntoIterator<Item = &'a Post>,
+    ) -> Self {
+        let mut posts: Vec<PostEntry> = posts.into_iter().map(From::from).collect();
+        posts.sort_by_key(|a| a.date.clone());
         posts.reverse();
 
-        Listing {
+        ListingPage {
             title: title.into(),
-            tag_path: tag
+            tag_path: tag_path
                 .split('/')
                 .filter(|a| !a.trim().is_empty())
                 .map(str::to_string)
@@ -262,7 +365,7 @@ impl<'a> Listing<'a> {
     }
 }
 
-#[derive(Default, Template)]
+#[derive(Default, Debug, Template, SerializeDisplay)]
 #[template(path = "feed.xml")]
 /// Atom feed.
 pub struct Feed {
