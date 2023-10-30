@@ -13,7 +13,7 @@ askama = "0.12"
 base64-url = "2"
 dircpy = "0.3"
 idm = "0.4"
-indexmap = { version = "1", features = ["serde"] }
+indexmap = { version = "2", features = ["serde"] }
 md5 = "0.7"
 pulldown-cmark = { version = "0.9", features = ["simd"] }
 serde = { version = "1", features = ["derive"] }
