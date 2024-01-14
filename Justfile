@@ -1,5 +1,8 @@
 #set shell := ["sh"]
 
+# TODO: FILL YOUR REPO URL HERE
+# repository := "git@github.com:[USERNAME]/[BLOG-REPO]"
+
 # Run a local webserver to test the site.
 serve:
     @cargo run
@@ -11,3 +14,18 @@ serve:
 
 build:
     cargo run
+
+# Use local build to publish to gh-pages.
+publish:
+    #!/bin/sh
+    rm -rf public/
+    cargo run
+    DIR=$(mktemp -d)
+    cp -r public/* $DIR/
+    cd $DIR/
+    git init --initial-branch=master
+    git add .
+    git commit -m "Automated deployment to gh-pages"
+    git push --force {{repository}} master:gh-pages
+    cd -
+    rm -rf $DIR/
