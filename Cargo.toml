@@ -15,7 +15,7 @@ dircpy = "0.3"
 idm = "0.4"
 indexmap = { version = "2", features = ["serde"] }
 md5 = "0.7"
-pulldown-cmark = { version = "0.9", features = ["simd"] }
+pulldown-cmark = { version = "0.10", features = ["simd"] }
 serde = { version = "1", features = ["derive"] }
 serde_with = "3"
 walkdir = "2"
