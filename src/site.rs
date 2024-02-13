@@ -34,7 +34,7 @@ impl From<input::Site> for Site {
             .iter()
             .map(|p| {
                 let p = Post::from(p);
-                (format!("{}/index.html", p.slug), p)
+                (format!("{}.html", p.slug), p)
             })
             .collect();
         let mut links_page = LinksPage {
@@ -92,7 +92,7 @@ impl Post {
 impl From<(&String, &((input::PostHeader,), String))> for Post {
     fn from((slug, ((data,), body)): (&String, &((input::PostHeader,), String))) -> Self {
         Post {
-            url: format!("{}{}/", crate::WEBSITE, slug),
+            url: format!("{}{}", crate::WEBSITE, slug),
             slug: slug.clone(),
             // Generate a title from the slug if not specified.
             title: if data.title.is_empty() {
@@ -285,7 +285,7 @@ impl From<&Post> for FeedEntry {
     fn from(value: &Post) -> Self {
         FeedEntry {
             title: value.title.clone(),
-            link: format!("{}{}/", crate::WEBSITE, value.slug),
+            link: format!("{}{}", crate::WEBSITE, value.slug),
             updated: value.feed_date.clone(),
             content: "".to_owned(),
         }

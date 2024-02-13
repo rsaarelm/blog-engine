@@ -15,7 +15,7 @@
 </h1>
 <ul>
   {% for post in posts %}
-  <li><a href="/{{ post.slug|e }}/">{{ post.title }}</a> | {{ post.date }} </li>
+  <li><a href="/{{ post.slug|e }}">{{ post.title }}</a> | {{ post.date }} </li>
   {% endfor %}
 </ul>
 {% endblock content %}
