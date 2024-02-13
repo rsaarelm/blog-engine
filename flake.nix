@@ -17,6 +17,7 @@
             clippy
             rustfmt
             entr
+            caddy
           ];
         });
       });

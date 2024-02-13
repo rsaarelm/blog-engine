@@ -4,13 +4,11 @@
 # repository := "git@github.com:[USERNAME]/[BLOG-REPO]"
 
 # Run a local webserver to test the site.
-serve:
-    @cargo run
-    @cargo install basic-http-server
+serve: build
     @echo Running test server at http://localhost:4000/
     # Run entr to regenerate the site whenever a post changes.
     # Set Ctrl-C to stop both the background server and the updater daemon.
-    @(trap 'kill 0' SIGINT; ~/.cargo/bin/basic-http-server public/ & (find site/ | entr cargo run) )
+    @(trap 'kill 0' SIGINT; caddy run & (find site/ | entr cargo run) )
 
 build:
     cargo run
