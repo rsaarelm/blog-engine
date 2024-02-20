@@ -11,6 +11,7 @@ resolver = "2"
 anyhow = "1.0.75"
 askama = "0.12"
 base64-url = "2"
+clap = { version = "4", features = ["derive"] }
 dircpy = "0.3"
 idm = "0.4"
 indexmap = { version = "2", features = ["serde"] }
