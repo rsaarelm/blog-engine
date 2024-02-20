@@ -4,14 +4,14 @@
 # repository := "git@github.com:[USERNAME]/[BLOG-REPO]"
 
 # Run a local webserver to test the site.
-serve: build
+serve source='./site/': (build source)
     @echo Running test server at http://localhost:8080/
     # Run entr to regenerate the site whenever a post changes.
     # Set Ctrl-C to stop both the background server and the updater daemon.
-    @(trap 'kill 0' SIGINT; caddy run & (find site/ | entr cargo run) )
+    @(trap 'kill 0' SIGINT; caddy run & (find {{source}} | entr just build {{source}}) )
 
-build:
-    cargo run
+build source='./site/':
+    cargo run -- --source {{source}}
 
 # Use local build to publish to gh-pages.
 publish:
