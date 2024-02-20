@@ -8,6 +8,10 @@ serve source='./site/': (build source)
     @echo Running test server at http://localhost:8080/
     # Run entr to regenerate the site whenever a post changes.
     # Set Ctrl-C to stop both the background server and the updater daemon.
+    #
+    # XXX: You must restart `just serve` if you add new posts after starting
+    # it, entr will only run on the posts that are present when the server was
+    # started.
     @(trap 'kill 0' SIGINT; caddy run & (find {{source}} | entr just build {{source}}) )
 
 build source='./site/':
