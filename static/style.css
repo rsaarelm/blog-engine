@@ -12,6 +12,7 @@ h1 {
 h2 { font-size: 1.25rem; }
 h3 { font-size: 1.05rem; }
 header { text-align: center; }
+ul { list-style: circle; padding-inline-start: 1em; }
 body {
     max-width: 40rem;
     margin: 0 auto;
