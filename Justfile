@@ -5,7 +5,7 @@
 
 # Run a local webserver to test the site.
 serve: build
-    @echo Running test server at http://localhost:4000/
+    @echo Running test server at http://localhost:8080/
     # Run entr to regenerate the site whenever a post changes.
     # Set Ctrl-C to stop both the background server and the updater daemon.
     @(trap 'kill 0' SIGINT; caddy run & (find site/ | entr cargo run) )
