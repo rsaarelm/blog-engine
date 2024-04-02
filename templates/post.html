@@ -11,7 +11,7 @@
 
 <h1 class="title">{{ title }}</h1>
 
-<div><em>{% if tags.len() > 0 %}Tags:
+<div class="status"><em>{% if tags.len() > 0 %}Tags:
 {% for tag in tags %}<a href="/tags/{{tag}}/">{{ tag }}</a>{% if !loop.last %}, {% endif %}{% endfor %}
 | {% endif %}{{ date }}{% if updated != "" %}, updated: {{ updated }}{% endif %}
 </em></div>
