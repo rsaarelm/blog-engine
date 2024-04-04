@@ -31,7 +31,7 @@ pub struct PostHeader {
 #[derive(Default, Debug, Deserialize)]
 #[serde(default)]
 pub struct LinkHeader {
-    pub title: String,
+    pub uri: String,
     pub added: String,
     pub date: String,
     pub tags: Vec<String>,

@@ -225,21 +225,16 @@ pub struct Link {
 }
 
 impl From<(&String, &((input::LinkHeader,), String))> for Link {
-    fn from((url, ((data,), content)): (&String, &((input::LinkHeader,), String))) -> Self {
-        // Use URL as title if input didn't specify a title.
-        let mut title = if data.title.is_empty() {
-            url.clone()
-        } else {
-            data.title.clone()
-        };
+    fn from((title, ((data,), content)): (&String, &((input::LinkHeader,), String))) -> Self {
+        let mut title = title.clone();
 
         // Mark PDF links
-        if url.ends_with(".pdf") && (!title.ends_with(".pdf") && !title.ends_with(" (pdf)")) {
+        if data.uri.ends_with(".pdf") && (!title.ends_with(".pdf") && !title.ends_with(" (pdf)")) {
             title.push_str(" (pdf)");
         }
 
         Link {
-            url: url.clone(),
+            url: data.uri.clone(),
             title,
             added: data.added.clone(),
             date: data.date.clone(),
@@ -257,7 +252,7 @@ impl From<(&String, &((input::LinkHeader,), String))> for Link {
                 pulldown_cmark::html::push_html(&mut html, pulldown_cmark::Parser::new(content));
                 html
             },
-            id: base64_url::encode(&md5::compute(url).0),
+            id: base64_url::encode(&md5::compute(&data.uri).0),
         }
     }
 }
