@@ -224,8 +224,8 @@ pub struct Link {
     pub id: String,
 }
 
-impl From<(&String, &((input::LinkHeader,), String))> for Link {
-    fn from((title, ((data,), content)): (&String, &((input::LinkHeader,), String))) -> Self {
+impl From<&(String, ((input::LinkHeader,), String))> for Link {
+    fn from((title, ((data,), content)): &(String, ((input::LinkHeader,), String))) -> Self {
         let mut title = title.clone();
 
         // Mark PDF links

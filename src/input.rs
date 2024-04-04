@@ -15,7 +15,7 @@ pub enum Format {
 #[serde(default)]
 pub struct Site {
     pub posts: IndexMap<String, ((PostHeader,), String)>,
-    pub links: IndexMap<String, ((LinkHeader,), String)>,
+    pub links: Vec<(String, ((LinkHeader,), String))>,
 }
 
 #[derive(Default, Debug, Deserialize)]
