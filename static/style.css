@@ -37,7 +37,7 @@ body {
 .tag { color: brown; font-size: smaller; }
 .bookmark { list-style-type: none; }
 .bookmarks { padding: 0; }
-.note { margin-left: 1em; }
+.note { margin-left: 1em; font-size: smaller; }
 .outline {
   list-style-type: none;
   padding-left: 1em;
