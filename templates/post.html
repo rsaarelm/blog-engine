@@ -13,7 +13,7 @@
 
 <div class="status"><em>{% if tags.len() > 0 %}Tags:
 {% for tag in tags %}<a href="/tags/{{tag}}/">{{ tag }}</a>{% if !loop.last %}, {% endif %}{% endfor %}
-| {% endif %}{{ date }}{% if updated != "" %}, updated: {{ updated }}{% endif %}
+| {% endif %}{{ date }}{% if updated != "" %}, updated {{ updated }}{% endif %}
 </em></div>
 
 {{ content|e("none") }}
