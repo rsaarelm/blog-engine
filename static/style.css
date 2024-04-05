@@ -10,6 +10,13 @@ pre {
     max-width: 100%;
     overflow-x: auto;
 }
+
+a { text-decoration: none; }
+a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: from-font;
+}
+
 h1 {
     text-align: center;
     font-size: 1.5rem;
