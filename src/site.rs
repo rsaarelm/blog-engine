@@ -23,6 +23,8 @@ pub struct Site {
     pub _posts: BTreeMap<String, Post>,
     pub links: Links,
     pub tags: Tags,
+    /// Mapping from tags to topic tags, like "topology" -> "math".
+    pub topics: BTreeMap<String, String>,
 
     pub _listing: Listing,
 }
@@ -43,6 +45,17 @@ impl From<input::Site> for Site {
         links_page.links.reverse();
         let links_feed = Feed::new(format!("{BLOG_TITLE}: links"), "links/", &links_page.links);
 
+        let mut topics = BTreeMap::default();
+        for (topic, tags) in &site.tag_hierarchy {
+            for tag in tags {
+                topics.insert(tag.clone(), topic.clone());
+            }
+        }
+
+        for link in links_page.links.iter_mut() {
+            link.add_topics(&topics);
+        }
+
         let links = Links {
             page: links_page,
             feed: links_feed,
@@ -56,6 +69,7 @@ impl From<input::Site> for Site {
             _posts: posts,
             links,
             tags,
+            topics,
             _listing: listing,
         }
     }
@@ -222,6 +236,28 @@ pub struct Link {
     pub sequence: Vec<String>,
     pub content: String,
     pub id: String,
+}
+
+impl Link {
+    pub fn add_topics(&mut self, topics: &BTreeMap<String, String>) {
+        let mut new_tags: Vec<String> = Vec::new();
+        let mut redundant: Vec<String> = Vec::new();
+        for t in &self.tags {
+            if let Some(u) = topics.get(t) {
+                if self.tags.contains(u) {
+                    redundant.push(u.clone());
+                } else {
+                    new_tags.push(u.clone());
+                }
+            }
+        }
+        if !redundant.is_empty() {
+            eprintln!("Lint: Link {} has redundant topic tags {}",
+                self.url, redundant.join(", "));
+        }
+        new_tags.append(&mut self.tags);
+        self.tags = new_tags;
+    }
 }
 
 impl From<&(String, ((input::LinkHeader,), String))> for Link {

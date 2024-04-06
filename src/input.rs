@@ -12,10 +12,11 @@ pub enum Format {
 }
 
 #[derive(Default, Debug, Deserialize)]
-#[serde(default)]
+#[serde(default, rename_all = "kebab-case")]
 pub struct Site {
     pub posts: IndexMap<String, ((PostHeader,), String)>,
     pub links: Vec<(String, ((LinkHeader,), String))>,
+    pub tag_hierarchy: IndexMap<String, Vec<String>>,
 }
 
 #[derive(Default, Debug, Deserialize)]
