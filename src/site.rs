@@ -246,13 +246,13 @@ impl Link {
             if let Some(u) = topics.get(t) {
                 if self.tags.contains(u) {
                     redundant.push(u.clone());
-                } else {
+                } else if !new_tags.contains(u) {
                     new_tags.push(u.clone());
                 }
             }
         }
         if !redundant.is_empty() {
-            eprintln!("Lint: Link {} has redundant topic tags {}",
+            eprintln!("Lint: Link {} has redundant topic tags: {}",
                 self.url, redundant.join(", "));
         }
         new_tags.append(&mut self.tags);
