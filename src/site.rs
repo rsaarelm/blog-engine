@@ -23,8 +23,6 @@ pub struct Site {
     pub _posts: BTreeMap<String, Post>,
     pub links: Links,
     pub tags: Tags,
-    /// Mapping from tags to topic tags, like "topology" -> "math".
-    pub topics: BTreeMap<String, String>,
 
     pub _listing: Listing,
 }
@@ -69,7 +67,6 @@ impl From<input::Site> for Site {
             _posts: posts,
             links,
             tags,
-            topics,
             _listing: listing,
         }
     }
