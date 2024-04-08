@@ -114,7 +114,7 @@ window.onload = function() {
         {% for seq_url in item.sequence %}
         &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>[{{ loop.index + 1 }}]</a>
         {% endfor %}
-        {% if !item.bypass.is_empty() %}<a href="{{ item.bypass|e }}">🗝️</a>{% endif %}
+        {% if !item.bypass.is_empty() %}<a href="{{ item.bypass|e }}" target="_blank">🗝️</a>{% endif %}
         {% if item.is_external() %}<span class="site" onclick="toggleSite('{{ item.site }}')">({{ item.site }})</span>{% endif %}
         <br/>
         <a class="date" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<span class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}')">{{ tag }}</span>&nbsp;{% endfor %}
