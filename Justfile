@@ -12,7 +12,7 @@ serve source='./site/': (build source)
     # XXX: You must restart `just serve` if you add new posts after starting
     # it, entr will only run on the posts that are present when the server was
     # started.
-    @(trap 'kill 0' SIGINT; caddy run & (find {{source}} ./static/ ./templates/ | entr just build {{source}}) )
+    @(trap 'kill 0' SIGINT; caddy run & (find {{source}} ./src ./static/ ./templates/ | entr just build {{source}}) )
 
 build source='./site/':
     cargo run -- --source {{source}}
