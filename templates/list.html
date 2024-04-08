@@ -117,7 +117,7 @@ window.onload = function() {
         {% if !item.bypass.is_empty() %}<a href="{{ item.bypass|e }}" target="_blank">🗝️</a>{% endif %}
         {% if item.is_external() %}<span class="site" onclick="toggleSite('{{ item.site }}')">({{ item.site }})</span>{% endif %}
         <br/>
-        <a class="date" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<span class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}')">{{ tag }}</span>{% if !loop.last %}<span class="tag">, </span>{% endif %}{% endfor %}
+        <a class="status" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<span class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}')">{{ tag }}</span>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
         <div class="preview">{{ item.preview|e("none") }}</div>
     </li>{% endfor %}
 </ul>

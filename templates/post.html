@@ -10,10 +10,9 @@
 
 <h1 class="title">{{ title }}</h1>
 
-<div class="status"><em>{% if tags.len() > 0 %}Tags:
-{% for tag in tags %}<a href="/?tags={{tag}}">{{ tag }}</a>{% if !loop.last %}, {% endif %}{% endfor %}
-| {% endif %}{{ date }}{% if updated != "" %}, updated {{ updated }}{% endif %}
-</em></div>
+<div><span class="status">{{ date }}{% if updated != "" %} - {{ updated }}{% endif %} |</span>
+    {% for tag in tags %}<a class="tag" href="/?tags={{tag}}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
+</div>
 
 {{ content|e("none") }}
 
