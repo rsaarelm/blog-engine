@@ -44,6 +44,7 @@ blockquote {
     padding-left: 1em;
     padding-right: 1em;
 }
+.local { color: black; }
 .status { color: gray; font-size: smaller; }
 .site { color: gray; font-size: smaller; }
 .site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
