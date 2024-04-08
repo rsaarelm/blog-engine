@@ -44,12 +44,12 @@ blockquote {
     padding-left: 1em;
     padding-right: 1em;
 }
-.local { color: black; }
+.local { color: #052; }
 .status { color: gray; font-size: smaller; }
 .site { color: gray; font-size: smaller; }
 .site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
-.tag { color: brown; font-size: smaller; }
+.tag { color: darkslateblue; font-size: smaller; }
 .tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
 .link_item { list-style-type: none; }
