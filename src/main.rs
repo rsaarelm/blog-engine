@@ -1,14 +1,17 @@
 use clap::Parser;
 
+mod feed;
 mod input;
+mod list;
 mod site;
 mod util;
 
 use anyhow::{Context, Result};
-use site::Site;
+pub use feed::Feed;
+pub use list::{Item, List};
+pub use site::{Post, Site};
 
-pub const WEBSITE: &str = "https://example.com/";
-pub const BLOG_TITLE: &str = "EXAMPLE blog";
+pub const SITE_URL: &str = "https://example.com/";
 pub const FEED_LINK_COUNT: usize = 10;
 
 #[derive(Parser, Debug)]

@@ -1,11 +1,15 @@
 use std::{
+    collections::BTreeMap,
     fmt,
     fs::{self, File},
     io::{self, prelude::*},
     path::{Path, PathBuf},
 };
 
+use lazy_regex::regex;
 use serde::{Deserialize, Serialize};
+use tldextract::{TldExtractor, TldResult};
+use url::Url;
 
 pub const EPOCH: &str = "1970-01-01T00:00:00Z";
 
@@ -169,13 +173,142 @@ pub fn write_directory(root: impl AsRef<Path>, data: &impl Serialize) -> anyhow:
     write(root, &tree)
 }
 
-pub fn tag_set(tag: &str) -> Vec<&str> {
-    let mut ret = vec![tag];
-    for (i, c) in tag.char_indices() {
-        if c == '/' {
-            ret.push(&tag[0..i]);
+/// Strip archive site prefixes from URL.
+pub fn canonical_url(url: &str) -> String {
+    let rs = [
+        regex!(r"^https://web.archive.org/web/\d+/(http.*)$"),
+        regex!(r"^https://archive.today/\d+/(http.*)$"),
+    ];
+
+    for r in rs {
+        if let Some(caps) = r.captures(url) {
+            return caps[1].into();
         }
     }
 
-    ret
+    url.to_owned()
+}
+
+/// Extract site name from URL, with special handling for select sites.
+pub fn extract_site(url: &str) -> Option<String> {
+    let Ok(url) = Url::parse(url) else {
+        return None;
+    };
+    let Some(domain) = url.domain() else {
+        return None;
+    };
+
+    // Because the internet is cursed, we need to use the TLD database library
+    // to split apart domains.
+    let extractor = TldExtractor::new(Default::default());
+    let Ok(TldResult {
+        subdomain,
+        domain: Some(main_domain),
+        suffix: Some(suffix),
+    }) = extractor.extract(&domain)
+    else {
+        return None;
+    };
+
+    let truncated_domain = format!("{main_domain}.{suffix}");
+
+    // keep the subdomain if the domain is [subdomain].[any of these]
+    let keep_subdomain = [
+        "blogspot.com",
+        "dreamwidth.org",
+        "github.io",
+        "ibiblio.org",
+        "neocities.org",
+        "substack.com",
+        "tumblr.com",
+        "typepad.com",
+        "wordpress.com",
+    ];
+
+    // Keep the subdomain if it's this exact one.
+    let keep_specific_subdomain = ["gist.github.com", "groups.google.com"];
+
+    // XXX: One-off special case for gist.github.com full domain.
+    let mut domain = if keep_subdomain.contains(&truncated_domain.as_str())
+        || keep_specific_subdomain.contains(&domain)
+    {
+        if let Some(subdomain) = subdomain {
+            format!("{subdomain}.{truncated_domain}")
+        } else {
+            truncated_domain
+        }
+    } else {
+        truncated_domain
+    };
+
+    // Add the first segment if the whole domain string is exactly one of
+    // these.
+    //
+    // Tumblr has both [username].tumblr.com (keep subdomain) and
+    // tumblr.com/[username] (add segment) style URLs.
+    let add_segment = [
+        "facebook.com",
+        "gist.github.com",
+        "github.com",
+        "oocities.org",
+        "scienceblogs.com",
+        "tumblr.com",
+        "twitter.com",
+        "www.facebook.com",
+        "x.com",
+    ];
+
+    if add_segment.contains(&domain.as_str()) {
+        if let Some(mut segs) = url.path_segments() {
+            domain.push('/');
+            domain.push_str(segs.next().unwrap_or(""));
+        }
+    }
+
+    Some(domain)
+}
+
+pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, String>) {
+    let mut new_tags: Vec<String> = Vec::new();
+    let mut redundant: Vec<String> = Vec::new();
+    for t in tags.iter() {
+        if let Some(u) = topics.get(t) {
+            if tags.contains(u) {
+                redundant.push(u.clone());
+            } else if !new_tags.contains(u) {
+                new_tags.push(u.clone());
+            }
+        }
+    }
+    if !redundant.is_empty() {
+        eprintln!(
+            "Lint: List {tags:?} has redundant topic tags: {}",
+            redundant.join(", ")
+        );
+    }
+    new_tags.append(tags);
+    *tags = new_tags;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn domain_mangle() {
+        for (a, b) in [
+            ("https://www.example.com/xyzzy", "example.com"),
+            ("https://github.com/foozbulator", "github.com/foozbulator"),
+            ("https://tumblr.com/user/wotsit", "tumblr.com/user"),
+            ("https://user.tumblr.com/wotsit", "user.tumblr.com"),
+            ("https://gist.github.com/user", "gist.github.com/user"),
+            ("https://www.facebook.com/user", "facebook.com/user"),
+            ("https://twitter.com/user", "twitter.com/user"),
+            ("https://user.blogspot.com/wotsit", "user.blogspot.com"),
+            ("https://cambridge.ac.uk/wotsit", "cambridge.ac.uk"),
+            ("https://www.cambridge.ac.uk/wotsit", "cambridge.ac.uk"),
+        ] {
+            assert_eq!(extract_site(a).unwrap(), b);
+        }
+    }
 }

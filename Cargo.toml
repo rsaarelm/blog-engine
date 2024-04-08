@@ -15,8 +15,11 @@ clap = { version = "4", features = ["derive"] }
 dircpy = "0.3"
 idm = "0.4"
 indexmap = { version = "2", features = ["serde"] }
+lazy-regex = "3"
 md5 = "0.7"
 pulldown-cmark = { version = "0.10", features = ["simd"] }
 serde = { version = "1", features = ["derive"] }
 serde_with = "3"
+tldextract = "0.6.0"
+url = "2.5.0"
 walkdir = "2"

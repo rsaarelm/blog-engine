@@ -46,10 +46,15 @@ blockquote {
 }
 .status { color: gray; font-size: smaller; }
 .date { color: gray; font-size: smaller; }
+.site { color: gray; font-size: smaller; }
+.site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
+
 .tag { color: brown; font-size: smaller; }
-.bookmark { list-style-type: none; }
-.bookmarks { padding: 0; }
-.note { margin-left: 1em; font-size: smaller; }
+.tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
+
+.link_item { list-style-type: none; }
+.links { padding: 0; }
+.preview { margin-left: 1em; font-size: smaller; }
 .outline {
   list-style-type: none;
   padding-left: 1em;

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block header %}<script>
+function filterByTag(requested) {
+    const items = document.querySelectorAll('li');
+    items.forEach(item => {
+        const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
+        const show = requested.every(tag => {
+            return tags.some(tag2 => { return tag2 === tag })
+        });
+
+        if (!show) {
+            item.style.display = 'none';
+        }
+    });
+
+    // Emphasize selected tags.
+    requested.forEach(tag => {
+        document.querySelectorAll('.tag_' + tag).forEach(
+            tag => {tag.style.fontWeight = 'bold';}
+        );
+    });
+}
+
+function filterBySite(requested) {
+    const siteString = "(" + requested + ")";
+    const items = document.querySelectorAll('li');
+    items.forEach(item => {
+        const linkSite = Array.from(item.getElementsByClassName('site')).map(x => x.textContent);
+        if (linkSite != siteString) {
+            item.style.display = 'none';
+        }
+    });
+
+    document.querySelectorAll('.site').forEach(
+        tag => {tag.style.fontWeight = 'bold';}
+    );
+}
+
+// Navigate to a version of current page with new params.
+function apply(params) {
+    const currentUrl = window.location.href.split('#')[0].split('?')[0];
+    if (params.size == 0) {
+        window.location.href = currentUrl + window.location.hash;
+    } else {
+        window.location.href = currentUrl + "?" + params.toString() + window.location.hash;
+    }
+}
+
+function toggleTag(tag) {
+    let urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has("tags")) {
+        urlParams.set("tags", tag);
+    } else {
+        const tags = urlParams.get("tags");
+        const current = tags.split(' ');
+        const filtered = current.filter(a => { return a != tag; });
+
+        if (filtered.length == current.length) {
+            // Tag isn't requested yet, add it to list.
+            urlParams.set("tags", tags + " " + tag);
+        } else if (filtered.length == 0) {
+            // Tag was the only tag, remove the whole parameter.
+            urlParams.delete("tags");
+        } else {
+            // Tag was part of a multi-tag query, drop to the remaining other tags.
+            urlParams.set("tags", filtered.join(" "));
+        }
+    }
+
+    apply(urlParams);
+}
+
+function toggleSite(site) {
+    let urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has("site")) {
+        urlParams.set("site", site);
+    } else if (urlParams.get("site") == site) {
+        urlParams.delete("site");
+    } else {
+        urlParams.set("site", site);
+    }
+
+    apply(urlParams);
+}
+
+function processParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("tags")) {
+        filterByTag(urlParams.get("tags").split(" "));
+    }
+    if (urlParams.has("site")) {
+        filterBySite(urlParams.get("site"));
+    }
+}
+
+window.onload = function() {
+    processParams();
+}
+</script>{% endblock header %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<header>
+    <a href="/">posts</a> |
+    <a href="/links">links</a>
+</header>
+
+<ul class="links">{% for item in items %}
+    <li style="margin-bottom:4px" class="link_item" id="{{ item.id }}">
+        {% if item.is_archived %}<span title="archived dead link">𝔄</span>{% endif %}
+        <a href="{{ item.url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>{{ item.title }}</a>
+        {% for seq_url in item.sequence %}
+        &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>[{{ loop.index + 1 }}]</a>
+        {% endfor %}
+        {% if !item.bypass.is_empty() %}<a href="{{ item.bypass|e }}">🗝️</a>{% endif %}
+        {% if item.is_external() %}<span class="site" onclick="toggleSite('{{ item.site }}')">({{ item.site }})</span>{% endif %}
+        <br/>
+        <a class="date" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<span class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}')">{{ tag }}</span>&nbsp;{% endfor %}
+        <div class="preview">{{ item.preview|e("none") }}</div>
+    </li>{% endfor %}
+</ul>
+
+{% endblock content %}
+
+{% block feed %}<a type="application/atom+xml" rel="alternate" href="{{ feed_path }}"><img src="/feed.png" alt="Atom feed"></a>&nbsp;{% endblock %}

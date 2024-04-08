@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{{ title }}</title>
-  <link href="{{ link }}"/>
-  <link href="{{ link }}feed.xml" rel="self"/>
+  <author><name>{{ author }}</name></author>
   <updated>{{ updated }}</updated>
-  <id>{{ link }}</id>
+  <link href="{{ link }}"/>
+  <link href="{{ feed_link }}" rel="self"/>
+  <id>{{ feed_link }}</id>
 
   {% for entry in entries %}<entry>
     <title>{{ entry.title }}</title>
