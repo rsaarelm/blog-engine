@@ -4,6 +4,7 @@ mod input;
 mod site;
 mod util;
 
+use anyhow::{Context, Result};
 use site::Site;
 
 pub const WEBSITE: &str = "https://example.com/";
@@ -21,11 +22,14 @@ struct Args {
     output: std::path::PathBuf,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Args::parse();
 
-    let site_text = util::read_directory(&args.source).expect("Failed to read site data");
-    let site: Site = idm::from_str(&site_text).expect("Failed to parse site data");
-    util::write_directory(&args.output, &site).expect("Failed to write site web page");
-    dircpy::copy_dir("static/", &args.output).unwrap();
+    let site_text =
+        util::read_directory(&args.source).with_context(|| "Failed to read site data")?;
+    let site: Site = idm::from_str(&site_text).with_context(|| "Failed to parse site data")?;
+    util::write_directory(&args.output, &site).with_context(|| "Failed to write site web page")?;
+    dircpy::copy_dir("static/", &args.output).with_context(|| "Failed to copy static files")?;
+
+    Ok(())
 }

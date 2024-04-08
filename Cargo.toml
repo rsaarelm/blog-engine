@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 resolver = "2"
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow = "1"
 askama = "0.12"
 base64-url = "2"
 clap = { version = "4", features = ["derive"] }
