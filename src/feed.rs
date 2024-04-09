@@ -15,9 +15,6 @@ pub struct Feed {
     entries: Vec<FeedEntry>,
 }
 
-// TODO All feeds are at root, have different filenames, change behavior of
-// path parameter and the feed.xml template.
-
 impl Feed {
     pub fn new<T: Into<FeedEntry>>(
         title: &str,

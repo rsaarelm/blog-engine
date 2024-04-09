@@ -205,7 +205,7 @@ pub fn extract_site(url: &str) -> Option<String> {
         subdomain,
         domain: Some(main_domain),
         suffix: Some(suffix),
-    }) = extractor.extract(&domain)
+    }) = extractor.extract(domain)
     else {
         return None;
     };
@@ -281,9 +281,12 @@ pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, String>) {
             }
         }
     }
+
+    // Print some lints.
+    // XXX: Lints could be printed with log::warn! instead
     if !redundant.is_empty() {
         eprintln!(
-            "Lint: List {tags:?} has redundant topic tags: {}",
+            "List {tags:?} has redundant topic tags: {}",
             redundant.join(", ")
         );
     }
