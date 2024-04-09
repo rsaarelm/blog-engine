@@ -250,6 +250,7 @@ pub fn extract_site(url: &str) -> Option<String> {
         "facebook.com",
         "gist.github.com",
         "github.com",
+        "medium.com",
         "oocities.org",
         "scienceblogs.com",
         "tumblr.com",
