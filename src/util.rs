@@ -218,6 +218,7 @@ pub fn extract_site(url: &str) -> Option<String> {
         "dreamwidth.org",
         "github.io",
         "ibiblio.org",
+        "medium.com",
         "neocities.org",
         "substack.com",
         "tumblr.com",
@@ -244,8 +245,9 @@ pub fn extract_site(url: &str) -> Option<String> {
     // Add the first segment if the whole domain string is exactly one of
     // these.
     //
-    // Tumblr has both [username].tumblr.com (keep subdomain) and
-    // tumblr.com/[username] (add segment) style URLs.
+    // Tumblr and medium have both [username].domain.com (keep subdomain) and
+    // domain.com/[username] (add segment) style URLs.
+    //
     let add_segment = [
         "facebook.com",
         "gist.github.com",
