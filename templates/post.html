@@ -6,7 +6,7 @@
 <h1 class="title">{{ title }}</h1>
 
 <div><span class="status">{{ date }}{% if updated != "" %} - {{ updated }}{% endif %} |</span>
-    {% for tag in tags %}<a class="tag" href="/?tags={{tag}}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
+    {% for tag in tags %}<a class="tag" href=".?tags={{tag}}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
 </div>
 
 {{ content|e("none") }}
