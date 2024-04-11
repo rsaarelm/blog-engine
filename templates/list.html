@@ -22,6 +22,19 @@ function filterByTag(requested) {
     });
 }
 
+// Return if tag1 is a superset of tag2, ie. every item tagged with tag2 is
+// also tagged with tag1
+function isSuperset(tag1, tag2) {
+    const items = document.querySelectorAll('li');
+    for (let i = 0; i < items.length; i++) {
+        const tags = Array.from(items[i].getElementsByClassName('tag')).map(x => x.textContent);
+        if (tags.includes(tag2) && !tags.includes(tag1)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function filterBySite(requested) {
     const siteString = "(" + requested + ")";
     const items = document.querySelectorAll('li');
@@ -53,12 +66,24 @@ function toggleTag(tag) {
         urlParams.set("tags", tag);
     } else {
         const tags = urlParams.get("tags");
-        const current = tags.split(' ');
+        let current = tags.split(' ');
         const filtered = current.filter(a => { return a != tag; });
 
         if (filtered.length == current.length) {
+            // Remove supersets of new tag from selection, having them
+            // selected does not change the view.
+
+            // Also remove subsets of the new tag, if the user is selecting a
+            // superset tag, having a subset selected would not change the
+            // current view, so assume the user wants it gone.
+            current = current.filter(a => {
+                return !isSuperset(a, tag) && !isSuperset(tag, a);
+            });
+            current.push(tag);
+            const tags = current.join(" ");
+
             // Tag isn't requested yet, add it to list.
-            urlParams.set("tags", tags + " " + tag);
+            urlParams.set("tags", tags);
         } else if (filtered.length == 0) {
             // Tag was the only tag, remove the whole parameter.
             urlParams.delete("tags");
