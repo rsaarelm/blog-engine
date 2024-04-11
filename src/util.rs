@@ -46,13 +46,11 @@ impl Outline {
             output: &mut Vec<(&'a str, Vec<&'a str>)>,
         ) {
             for ((head,), body) in &outline.0 {
-                if body.0.is_empty() {
-                    output.push((&head, prefix.clone()));
-                } else {
-                    let mut new_prefix = prefix.clone();
-                    new_prefix.push(head);
-                    walk(new_prefix, body, output);
-                }
+                output.push((&head, prefix.clone()));
+
+                let mut new_prefix = prefix.clone();
+                new_prefix.push(head);
+                walk(new_prefix, body, output);
             }
         }
 
