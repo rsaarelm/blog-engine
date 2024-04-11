@@ -3,7 +3,7 @@
 use indexmap::IndexMap;
 use serde::Deserialize;
 
-use crate::util::Word;
+use crate::util::{Outline, Word};
 
 #[derive(Copy, Clone, Default, Debug, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -18,7 +18,7 @@ pub enum Format {
 pub struct Site {
     pub posts: IndexMap<String, ((PostHeader,), String)>,
     pub links: Vec<(String, ((LinkHeader,), String))>,
-    pub tag_hierarchy: IndexMap<String, Vec<String>>,
+    pub tag_hierarchy: Outline,
 }
 
 #[derive(Default, Debug, Deserialize)]

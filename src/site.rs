@@ -1,6 +1,9 @@
 //! Output types that emit templates.
 
-use std::{collections::BTreeMap, fmt::Write};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fmt::Write,
+};
 
 use askama::Template;
 use serde::{Deserialize, Serialize};
@@ -43,10 +46,12 @@ impl From<input::Site> for Site {
             })
             .collect();
 
-        let mut topics = BTreeMap::default();
-        for (topic, tags) in &site.tag_hierarchy {
-            for tag in tags {
-                topics.insert(tag.clone(), topic.clone());
+        let mut topics: BTreeMap<String, BTreeSet<String>> = Default::default();
+
+        for (tag, path) in site.tag_hierarchy.full_paths() {
+            let bag = topics.entry(tag.to_owned()).or_default();
+            for t in path {
+                bag.insert(t.to_string());
             }
         }
 

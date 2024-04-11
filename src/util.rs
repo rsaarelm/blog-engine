@@ -1,5 +1,5 @@
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fmt,
     fs::{self, File},
     io::{self, prelude::*},
@@ -16,7 +16,7 @@ use url::Url;
 
 pub const EPOCH: &str = "1970-01-01T00:00:00Z";
 
-#[derive(Deserialize)]
+#[derive(Default, Debug, Deserialize)]
 pub struct Outline(pub Vec<((String,), Outline)>);
 
 impl fmt::Display for Outline {
@@ -33,6 +33,32 @@ impl fmt::Display for Outline {
         }
 
         print(f, 0, self)
+    }
+}
+
+impl Outline {
+    /// Create list of outline leaves and all the parent headlines leading to
+    /// them.
+    pub fn full_paths(&self) -> Vec<(&'_ str, Vec<&'_ str>)> {
+        fn walk<'a>(
+            prefix: Vec<&'a str>,
+            outline: &'a Outline,
+            output: &mut Vec<(&'a str, Vec<&'a str>)>,
+        ) {
+            for ((head,), body) in &outline.0 {
+                if body.0.is_empty() {
+                    output.push((&head, prefix.clone()));
+                } else {
+                    let mut new_prefix = prefix.clone();
+                    new_prefix.push(head);
+                    walk(new_prefix, body, output);
+                }
+            }
+        }
+
+        let mut ret = Vec::new();
+        walk(Vec::new(), self, &mut ret);
+        ret
     }
 }
 
@@ -300,15 +326,17 @@ pub fn extract_site(url: &str) -> Option<String> {
     Some(domain)
 }
 
-pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, String>) {
+pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<String>>) {
     let mut new_tags: Vec<String> = Vec::new();
     let mut redundant: Vec<String> = Vec::new();
     for t in tags.iter() {
-        if let Some(u) = topics.get(t) {
-            if tags.contains(u) {
-                redundant.push(u.clone());
-            } else if !new_tags.contains(u) {
-                new_tags.push(u.clone());
+        if let Some(us) = topics.get(t) {
+            for u in us {
+                if tags.contains(u) {
+                    redundant.push(u.clone());
+                } else if !new_tags.contains(u) {
+                    new_tags.push(u.clone());
+                }
             }
         }
     }
