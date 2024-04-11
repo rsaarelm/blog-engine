@@ -119,7 +119,7 @@ impl From<(&String, &((input::PostHeader,), String))> for Post {
             } else {
                 util::EPOCH.to_owned()
             },
-            tags: data.tags.clone(),
+            tags: data.tags.iter().cloned().map(String::from).collect(),
 
             content: match data.format {
                 Format::Markdown => {

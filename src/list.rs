@@ -113,7 +113,7 @@ impl From<&(String, ((input::LinkHeader,), String))> for Item {
             } else {
                 util::EPOCH.to_owned()
             },
-            tags: data.tags.clone(),
+            tags: data.tags.iter().cloned().map(String::from).collect(),
             sequence: data.sequence.clone(),
             preview: {
                 let mut html = String::new();

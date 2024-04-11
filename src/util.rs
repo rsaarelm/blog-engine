@@ -4,10 +4,13 @@ use std::{
     fs::{self, File},
     io::{self, prelude::*},
     path::{Path, PathBuf},
+    str::FromStr,
 };
 
+use anyhow::bail;
 use lazy_regex::regex;
 use serde::{Deserialize, Serialize};
+use serde_with::DeserializeFromStr;
 use tldextract::{TldExtractor, TldResult};
 use url::Url;
 
@@ -30,6 +33,32 @@ impl fmt::Display for Outline {
         }
 
         print(f, 0, self)
+    }
+}
+
+/// Exactly one non-empty word of non-whitespace characters.
+#[derive(Clone, Debug, DeserializeFromStr)]
+pub struct Word(String);
+
+impl FromStr for Word {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.trim();
+        if s.is_empty() {
+            bail!("Empty word");
+        }
+        if s.contains(char::is_whitespace) {
+            bail!("Word has whitespace");
+        }
+
+        Ok(Word(s.to_owned()))
+    }
+}
+
+impl From<Word> for String {
+    fn from(value: Word) -> Self {
+        value.0
     }
 }
 
