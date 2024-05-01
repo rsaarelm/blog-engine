@@ -31,3 +31,7 @@ publish:
     git push --force {{repository}} master:gh-pages
     cd -
     rm -rf $DIR/
+
+update-flake:
+    rm -rf .direnv/
+    nix flake update
