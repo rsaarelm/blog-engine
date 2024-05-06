@@ -273,6 +273,7 @@ pub fn extract_site(url: &str) -> Option<String> {
         "ibiblio.org",
         "medium.com",
         "neocities.org",
+        "rationalsites.com",
         "substack.com",
         "tumblr.com",
         "typepad.com",
@@ -282,14 +283,13 @@ pub fn extract_site(url: &str) -> Option<String> {
     // Keep the subdomain if it's this exact one.
     let keep_specific_subdomain = ["gist.github.com", "groups.google.com"];
 
-    // XXX: One-off special case for gist.github.com full domain.
     let mut domain = if keep_subdomain.contains(&truncated_domain.as_str())
         || keep_specific_subdomain.contains(&domain)
     {
-        if let Some(subdomain) = subdomain {
-            format!("{subdomain}.{truncated_domain}")
-        } else {
-            truncated_domain
+        match subdomain {
+            // Never include "www", this is for www.tumblr.com.
+            Some(subdomain) if subdomain != "www" => format!("{subdomain}.{truncated_domain}"),
+            _ => truncated_domain,
         }
     } else {
         truncated_domain
@@ -299,7 +299,7 @@ pub fn extract_site(url: &str) -> Option<String> {
     // these.
     //
     // Tumblr and medium have both [username].domain.com (keep subdomain) and
-    // domain.com/[username] (add segment) style URLs.
+    // (www.)domain.com/[username] (add segment) style URLs.
     //
     let add_segment = [
         "facebook.com",
@@ -360,7 +360,7 @@ mod tests {
         for (a, b) in [
             ("https://www.example.com/xyzzy", "example.com"),
             ("https://github.com/foozbulator", "github.com/foozbulator"),
-            ("https://tumblr.com/user/wotsit", "tumblr.com/user"),
+            ("https://www.tumblr.com/user/wotsit", "tumblr.com/user"),
             ("https://user.tumblr.com/wotsit", "user.tumblr.com"),
             ("https://gist.github.com/user", "gist.github.com/user"),
             ("https://www.facebook.com/user", "facebook.com/user"),
