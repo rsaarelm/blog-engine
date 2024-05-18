@@ -35,6 +35,26 @@ function isSuperset(tag1, tag2) {
     return true;
 }
 
+function resetSelection() {
+    // Show hidden items.
+    document.querySelectorAll('li').forEach(item => {
+        if (item.style.display == 'none') {
+            item.style.display = 'initial';
+        }
+    });
+
+    // De-emphasize bolded tags and sites.
+    document.querySelectorAll('.tag').forEach(tag => {
+        if (tag.style.fontWeight == 'bold') {
+            tag.style.fontWeight = 'normal';
+        }
+    });
+
+    document.querySelectorAll('.site').forEach(site => {
+        site.style.fontWeight = 'normal';
+    });
+}
+
 function filterBySite(requested) {
     const siteString = "(" + requested + ")";
     const items = document.querySelectorAll('li');
@@ -45,19 +65,21 @@ function filterBySite(requested) {
         }
     });
 
-    document.querySelectorAll('.site').forEach(
-        tag => {tag.style.fontWeight = 'bold';}
-    );
+    document.querySelectorAll('.site').forEach(site => {
+        site.style.fontWeight = 'bold';
+    });
 }
 
 // Navigate to a version of current page with new params.
+// Use pushState to not trigger a page reload and keep things responsive.
 function apply(params) {
     const currentUrl = window.location.href.split('#')[0].split('?')[0];
     if (params.size == 0) {
-        window.location.href = currentUrl + window.location.hash;
+        window.history.pushState({}, "", currentUrl + window.location.hash);
     } else {
-        window.location.href = currentUrl + "?" + params.toString() + window.location.hash;
+        window.history.pushState({}, "", currentUrl + "?" + params.toString() + window.location.hash);
     }
+    processParams()
 }
 
 function toggleTag(tag) {
@@ -111,6 +133,7 @@ function toggleSite(site) {
 
 function processParams() {
     const urlParams = new URLSearchParams(window.location.search);
+    resetSelection();
     if (urlParams.has("tags")) {
         filterByTag(urlParams.get("tags").split(" "));
     }
@@ -122,6 +145,10 @@ function processParams() {
 window.onload = function() {
     processParams();
 }
+
+window.addEventListener("popstate", (event) => {
+    processParams();
+});
 </script>{% endblock header %}
 
 {% block title %}{{ title }}{% endblock %}
