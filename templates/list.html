@@ -74,7 +74,7 @@ function filterBySite(requested) {
 // Use pushState to not trigger a page reload and keep things responsive.
 function apply(params) {
     const currentUrl = window.location.href.split('#')[0].split('?')[0];
-    if (params.size == 0) {
+    if (params.keys().next().done) {
         window.history.pushState({}, "", currentUrl + window.location.hash);
     } else {
         window.history.pushState({}, "", currentUrl + "?" + params.toString() + window.location.hash);
