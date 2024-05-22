@@ -42,8 +42,8 @@ pub struct Item {
     /// longer accessible.
     pub is_archived: bool,
 
-    /// Alternative URL
-    pub bypass: String,
+    /// Original URL in case it's not usable and main link is a mirror.
+    pub original: String,
 
     /// Title of the target page.
     pub title: String,
@@ -93,19 +93,22 @@ impl From<&(String, ((input::LinkHeader,), String))> for Item {
             String::new()
         };
 
-        let bypass = if let Some(mirror) = &data.mirror {
-            mirror.clone()
+        let mut url = data.uri.clone();
+        let mut original = String::new();
+
+        if let Some(mirror) = &data.mirror {
+            original = url;
+            url = mirror.clone();
         } else if site == "doi.org" {
-            format!("https://sci-hub.se/{}", data.uri)
-        } else {
-            String::new()
-        };
+            original = url;
+            url = format!("https://sci-hub.se/{}", data.uri);
+        }
 
         Item {
-            url: data.uri.clone(),
+            url,
             site,
             is_archived,
-            bypass,
+            original,
             title,
             date: data.date.clone(),
             feed_date: if !data.added.is_empty() {
