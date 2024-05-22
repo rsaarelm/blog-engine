@@ -161,7 +161,7 @@ window.addEventListener("popstate", (event) => {
         {% for seq_url in item.sequence %}
         &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>[{{ loop.index + 1 }}]</a>
         {% endfor %}
-        {% if !item.original.is_empty() %}<a href="{{ item.original|e }}" target="_blank">🔗</a>{% endif %}
+        {% if !item.original.is_empty() %}<a href="{{ item.original|e }}" target="_blank">🔒</a>{% endif %}
         {% if item.is_external() %}<a class="site" onclick="toggleSite('{{ item.site }}'); return false" href="?site={{ item.site }}">({{ item.site }})</a>{% endif %}
         <br/>
         <a class="status" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<a class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}'); return false" href="?tags={{ tag }}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
