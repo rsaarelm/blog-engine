@@ -35,6 +35,7 @@ pub struct PostHeader {
 #[serde(default)]
 pub struct LinkHeader {
     pub uri: String,
+    pub mirror: Option<String>,
     pub added: String,
     pub date: String,
     pub tags: Vec<Word>,

@@ -93,7 +93,9 @@ impl From<&(String, ((input::LinkHeader,), String))> for Item {
             String::new()
         };
 
-        let bypass = if site == "doi.org" {
+        let bypass = if let Some(mirror) = &data.mirror {
+            mirror.clone()
+        } else if site == "doi.org" {
             format!("https://sci-hub.se/{}", data.uri)
         } else {
             String::new()
