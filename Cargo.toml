@@ -1,0 +1,19 @@
+[package]
+edition = "2021"
+name = "blog-engine"
+version = "0.1.0"
+authors = ["Risto Saarelma <risto.saarelma@iki.fi>"]
+description = "IDM-based blog generator"
+license = "MIT OR Apache-2.0"
+resolver = "2"
+
+[dependencies]
+askama = "0.12"
+base64-url = "2"
+dircpy = "0.3"
+idm = "0.4"
+indexmap = { version = "1", features = ["serde"] }
+md5 = "0.7"
+pulldown-cmark = { version = "0.9", features = ["simd"] }
+serde = { version = "1", features = ["derive"] }
+walkdir = "2"

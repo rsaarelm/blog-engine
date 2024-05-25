@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %} {{ title }} {% endblock title %}
+
+{% block content %}
+<div id='header'>
+    <a href="/">home</a> | <a href="/links/">links</a> |
+    <a class="feedbutton" type="application/atom+xml" rel="alternate" href="/feed.xml">Atom feed</a>
+</div>
+
+<h1 class="title">{{ title }}</h1>
+
+<div><em>{% if tags.len() > 0 %}Tags:
+{% for tag in tags %}<a href="/tags/{{tag}}/">{{ tag }}</a>{% if !loop.last %}, {% endif %}{% endfor %}
+| {% endif %}{{ date }}{% if updated != "" %}, updated: {{ updated }}{% endif %}
+</em></div>
+
+{{ content|e("none") }}
+
+{% endblock content %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block header %}<script>
+function showTaggedOnly(requested) {
+    const items = document.querySelectorAll('li');
+    items.forEach(item => {
+        const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
+        const show = requested.every(tag => { return tags.indexOf(tag) != -1 });
+
+        if (show) {
+            item.style.display = 'list-item';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function showAll() {
+    const items = document.querySelectorAll('li');
+    items.forEach(item => {
+        item.style.display = 'list-item';
+    })
+}
+
+window.onhashchange = function() {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.slice(1));
+    if (params.has('tags')) {
+        console.log(params.get('tags'));
+        const tags = params.get('tags').split(' ');
+        showTaggedOnly(tags)
+    } else {
+        showAll()
+    }
+}
+</script>{% endblock header %}
+
+{% block content %}
+    <div id='header'>
+        <a href="/">home</a> | <a href="/links/">links</a> |
+        <a class="feedbutton" type="application/atom+xml" rel="alternate" href="feed.xml">Atom feed</a>
+    </div>
+
+    <ul>{% for link in links %}
+        <li class="bookmark" id="{{ link.id }}">
+            <a href="{{ link.url }}" target="_blank">{{ link.title }}</a>
+            {% for seq in link.sequence %}
+            &nbsp;<a href="{{ seq }}", target="_blank">[{{ loop.index + 1 }}]</a>
+            {% endfor %}
+            <br/>
+            <a class="date" href="#{{ link.id }}">{{ link.date }}</a> {% for tag in link.tags %}<a class="tag" href="#tags={{ tag }}">{{ tag }}</a>&nbsp;{% endfor %}
+            <p>{{ link.content|e("none") }}</p>
+        </li>{% endfor %}
+    </ul>
+  </body>
+{% endblock content %}
