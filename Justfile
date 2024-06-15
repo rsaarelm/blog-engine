@@ -1,7 +1,17 @@
-#set shell := ["sh"]
+# Default branch and target repository assume you're using github pages with a
+# github account name that's the same as your current local login name.
 
-# TODO: FILL YOUR REPO URL HERE
-# repository := "git@github.com:[USERNAME]/[BLOG-REPO]"
+# To override this, set REPO and BRANCH environment variables with your server
+# and branch, for example:
+#     REPO=git@example.com BRANCH=master just publish
+
+repo := env_var_or_default('REPO', 'git@github.com:${USER}/${USER}.github.io/')
+branch := env_var_or_default('BRANCH', 'gh-pages')
+
+# Build sources into static website in ./public_html/
+build source='./site/':
+    rm -rf public_html/
+    cargo run -- --source {{source}}
 
 # Run a local webserver to test the site.
 serve source='./site/': (build source)
@@ -14,24 +24,23 @@ serve source='./site/': (build source)
     # started.
     @(trap 'kill 0' SIGINT; caddy run & (find {{source}} ./src ./static/ ./templates/ | entr -s 'just build {{source}}; notify-send rebuilt') )
 
-build source='./site/':
-    cargo run -- --source {{source}}
-
-# Use local build to publish to gh-pages.
-publish:
+publish source='./site/': (build source)
     #!/bin/sh
-    rm -rf public/
-    cargo run
-    DIR=$(mktemp -d)
-    cp -r public/* $DIR/
-    cd $DIR/
-    git init --initial-branch=master
-    git add .
-    git commit -m "Automated deployment to gh-pages"
-    git push --force {{repository}} master:gh-pages
-    cd -
-    rm -rf $DIR/
 
-update-flake:
-    rm -rf .direnv/
-    nix flake update
+    DIR=$(mktemp -d)
+    cp -r public_html/* $DIR/
+    cd $DIR/ > /dev/null
+    git init --initial-branch={{branch}}
+    git add .
+    git commit -m "Generated static site"
+
+    read -p "About to overwrite {{branch}} at {{repo}} with built site, proceed? [y/n] " -n 1
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        git push --force {{repo}} {{branch}}
+    else
+        echo "Aborted."
+    fi
+
+    cd - > /dev/null
+    rm -rf $DIR/

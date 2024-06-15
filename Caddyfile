@@ -1,5 +1,5 @@
 http://localhost:8080 {
-	root public
+	root public_html
 	file_server
 	try_files {path} {path}.html
 }

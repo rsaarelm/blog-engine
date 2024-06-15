@@ -21,7 +21,7 @@ struct Args {
     source: std::path::PathBuf,
 
     /// Path for generated HTML site.
-    #[clap(long, value_name = "PATH", default_value = "./public/")]
+    #[clap(long, value_name = "PATH", default_value = "./public_html/")]
     output: std::path::PathBuf,
 }
 
