@@ -1,4 +1,4 @@
-https://example.com/
-	:title Example link
+Example link
+	:uri https://example.com/
 	:date 2000-01-01
 	:tags example
