@@ -59,24 +59,28 @@ impl From<input::Site> for Site {
             util::add_topics(&mut post.tags, &topics);
         }
 
-        let index = List::new("rsaarelm's blog", "feed.xml", &posts);
+        let index = List::new(&site.settings.site_name, "feed.xml", &posts);
 
-        let mut links = List::new("rsaarelm's bookmarks", "feed-links.xml", &site.links);
+        let mut links = List::new(
+            format!("{}: Bookmarks", site.settings.site_name),
+            "feed-links.xml",
+            &site.links,
+        );
 
         for link in links.items.iter_mut() {
             util::add_topics(&mut link.tags, &topics);
         }
 
         let feed = Feed::new(
-            "rsaarelm's blog",
-            "Risto Saarelma",
+            &site.settings.site_name,
+            &site.settings.author,
             "feed.xml",
             posts.values(),
         );
 
         let links_feed = Feed::new(
-            "rsaarelm's links",
-            "Risto Saarelma",
+            &format!("{}: Bookmarks", site.settings.site_name),
+            &site.settings.author,
             "feed-links.xml",
             &links.items,
         );
