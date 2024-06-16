@@ -154,6 +154,8 @@ window.addEventListener("popstate", (event) => {
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<h1 class="title">{{ title }}</h1>
+
 <ul class="links">{% for item in items %}
     <li style="margin-bottom:4px" class="link_item" id="{{ item.id }}">
         {% if item.is_archived %}<span title="archived dead link">𝔄</span>{% endif %}
