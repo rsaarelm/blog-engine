@@ -24,11 +24,11 @@ serve source='./site/': (build source)
     # started.
     @(trap 'kill 0' SIGINT; caddy run & (find {{source}} ./src ./static/ ./templates/ | entr -s 'just build {{source}}; notify-send rebuilt') )
 
-publish source='./site/': (build source)
+publish source='./site/':
     #!/bin/sh
 
     DIR=$(mktemp -d)
-    cp -r public_html/* $DIR/
+    cargo run -- --source {{source}} --output $DIR
     cd $DIR/ > /dev/null
     git init --initial-branch={{branch}}
     git add .
