@@ -12,12 +12,12 @@ pub struct List {
 }
 
 impl List {
-    pub fn new<T: Into<Item>>(
+    pub fn new(
         title: impl Into<String>,
         feed_path: impl Into<String>,
-        items: impl IntoIterator<Item = T>,
+        items: impl IntoIterator<Item = Item>,
     ) -> Self {
-        let mut items: Vec<Item> = items.into_iter().map(Into::into).collect();
+        let mut items: Vec<Item> = items.into_iter().collect();
         items.sort_by(|a, b| b.date.cmp(&a.date));
 
         List {
@@ -30,6 +30,9 @@ impl List {
 
 #[derive(Default, Debug)]
 pub struct Item {
+    /// URL to local site's bookmark list.
+    pub home_url: String,
+
     /// URL of the item.
     pub url: String,
 
@@ -70,14 +73,13 @@ pub struct Item {
 }
 
 impl Item {
-    pub fn is_external(&self) -> bool {
-        self.url.starts_with("http://") || self.url.starts_with("https://")
-    }
-}
-
-impl From<&(String, ((input::LinkHeader,), String))> for Item {
-    fn from((title, ((data,), content)): &(String, ((input::LinkHeader,), String))) -> Self {
-        let mut title = title.clone();
+    pub fn new_bookmark(
+        settings: &input::Settings,
+        title: &str,
+        data: &input::LinkHeader,
+        content: &str,
+    ) -> Self {
+        let mut title = title.to_owned();
 
         // Mark PDF links
         if data.uri.ends_with(".pdf") && (!title.ends_with(".pdf") && !title.ends_with(" (pdf)")) {
@@ -104,12 +106,15 @@ impl From<&(String, ((input::LinkHeader,), String))> for Item {
             url = format!("https://sci-hub.se/{}", data.uri);
         }
 
+        let id = base64_url::encode(&md5::compute(&canonical_url).0);
+
         Item {
+            home_url: format!("{}links#{}", settings.base_url, id),
             url,
             site,
             is_archived,
             original,
-            title,
+            title: title.to_owned(),
             date: data.date.clone(),
             feed_date: if !data.added.is_empty() {
                 util::normalize_date(&data.added)
@@ -125,13 +130,11 @@ impl From<&(String, ((input::LinkHeader,), String))> for Item {
                 pulldown_cmark::html::push_html(&mut html, pulldown_cmark::Parser::new(content));
                 html
             },
-            id: base64_url::encode(&md5::compute(&canonical_url).0),
+            id,
         }
     }
-}
 
-impl From<(&String, &Post)> for Item {
-    fn from((_, post): (&String, &Post)) -> Self {
+    pub fn new_post(post: &Post) -> Self {
         Item {
             url: post.slug.clone(),
             title: post.title.clone(),
@@ -141,5 +144,9 @@ impl From<(&String, &Post)> for Item {
             id: post.slug.clone(),
             ..Default::default()
         }
+    }
+
+    pub fn is_external(&self) -> bool {
+        self.url.starts_with("http://") || self.url.starts_with("https://")
     }
 }

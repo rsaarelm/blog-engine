@@ -17,6 +17,7 @@ pub struct Feed {
 
 impl Feed {
     pub fn new<T: Into<FeedEntry>>(
+        base_url: &str,
         title: &str,
         author: &str,
         filename: &str,
@@ -35,7 +36,7 @@ impl Feed {
             .cloned()
             .unwrap_or(util::EPOCH.to_owned());
 
-        let link = crate::SITE_URL.to_owned();
+        let link = base_url.to_owned();
         let feed_link = format!("{link}{filename}");
 
         Feed {
@@ -61,7 +62,7 @@ impl From<&Item> for FeedEntry {
     fn from(value: &Item) -> Self {
         FeedEntry {
             title: value.title.clone(),
-            link: format!("{}links#{}", crate::SITE_URL, value.id),
+            link: value.home_url.clone(),
             updated: value.feed_date.clone(),
             content: format!(
                 "<a href='{}'>{}</a> ({})<br/>{} {}",
@@ -79,7 +80,7 @@ impl From<&Post> for FeedEntry {
     fn from(value: &Post) -> Self {
         FeedEntry {
             title: value.title.clone(),
-            link: format!("{}{}", crate::SITE_URL, value.slug),
+            link: format!("{}", value.url),
             updated: value.feed_date.clone(),
             content: "".to_owned(),
         }

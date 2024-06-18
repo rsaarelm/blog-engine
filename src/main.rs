@@ -11,7 +11,6 @@ pub use feed::Feed;
 pub use list::{Item, List};
 pub use site::{Post, Site};
 
-pub const SITE_URL: &str = "https://example.com/";
 pub const FEED_LINK_COUNT: usize = 10;
 
 #[derive(Parser, Debug)]

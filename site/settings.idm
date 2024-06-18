@@ -1,2 +1,3 @@
 :site-name Example Site
+:base-url https://example.com/
 :author John Doe

@@ -12,7 +12,7 @@ use serde_with::SerializeDisplay;
 use crate::{
     input::{self, Format},
     util::{self, Outline},
-    Feed, List,
+    Feed, Item, List,
 };
 
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -40,8 +40,8 @@ impl From<input::Site> for Site {
         let mut posts: BTreeMap<String, Post> = site
             .posts
             .iter()
-            .map(|p| {
-                let p = Post::from(p);
+            .map(|(slug, ((data,), body))| {
+                let p = Post::new(&site.settings, slug, data, body);
                 (format!("{}.html", p.slug), p)
             })
             .collect();
@@ -59,12 +59,18 @@ impl From<input::Site> for Site {
             util::add_topics(&mut post.tags, &topics);
         }
 
-        let index = List::new(&site.settings.site_name, "feed.xml", &posts);
+        let index = List::new(
+            &site.settings.site_name,
+            "feed.xml",
+            posts.iter().map(|(_, post)| Item::new_post(post)),
+        );
 
         let mut links = List::new(
             format!("{}: Bookmarks", site.settings.site_name),
             "feed-links.xml",
-            &site.links,
+            site.links.iter().map(|(title, ((data,), content))| {
+                Item::new_bookmark(&site.settings, title, data, content)
+            }),
         );
 
         for link in links.items.iter_mut() {
@@ -72,6 +78,7 @@ impl From<input::Site> for Site {
         }
 
         let feed = Feed::new(
+            &site.settings.base_url,
             &site.settings.site_name,
             &site.settings.author,
             "feed.xml",
@@ -79,6 +86,7 @@ impl From<input::Site> for Site {
         );
 
         let links_feed = Feed::new(
+            &format!("{}links", site.settings.base_url),
             &format!("{}: Bookmarks", site.settings.site_name),
             &site.settings.author,
             "feed-links.xml",
@@ -108,11 +116,16 @@ pub struct Post {
     pub content: String,
 }
 
-impl From<(&String, &((input::PostHeader,), String))> for Post {
-    fn from((slug, ((data,), body)): (&String, &((input::PostHeader,), String))) -> Self {
+impl Post {
+    pub fn new(
+        settings: &input::Settings,
+        slug: &str,
+        data: &input::PostHeader,
+        body: &str,
+    ) -> Self {
         Post {
-            url: format!("{}{}", crate::SITE_URL, slug),
-            slug: slug.clone(),
+            url: format!("{}{}", settings.base_url, slug),
+            slug: slug.to_string(),
             // Generate a title from the slug if not specified.
             title: if data.title.is_empty() {
                 util::unslugify(slug)

@@ -47,5 +47,6 @@ pub struct LinkHeader {
 #[serde(default, rename_all = "kebab-case")]
 pub struct Settings {
     pub site_name: String,
+    pub base_url: String,
     pub author: String,
 }
