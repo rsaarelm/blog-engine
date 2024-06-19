@@ -134,9 +134,7 @@ impl Post {
             },
             date: data.date.clone(),
             updated: data.updated.clone(),
-            feed_date: if !data.updated.is_empty() {
-                util::normalize_date(&data.updated)
-            } else if !data.date.is_empty() {
+            feed_date: if !data.date.is_empty() {
                 util::normalize_date(&data.date)
             } else {
                 util::EPOCH.to_owned()
