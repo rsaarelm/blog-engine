@@ -1,113 +1,78 @@
 {% extends "base.html" %}
 
 {% block header %}<script>
+const tagsFor = item => Array.from(item.querySelectorAll('.tag')).map(tag => tag.textContent);
+const select = selector => Array.from(document.querySelectorAll(selector));
+
 function filterByTag(requested) {
     const items = document.querySelectorAll('li');
     items.forEach(item => {
-        const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
-        const show = requested.every(tag => {
-            return tags.some(tag2 => { return tag2 === tag })
-        });
-
-        if (!show) {
-            item.style.display = 'none';
-        }
+        const tags = tagsFor(item);
+        const show = requested.every(tag => tags.includes(tag));
+        item.style.display = show ? '' : 'none';
     });
 
     // Emphasize selected tags.
     requested.forEach(tag => {
-        document.querySelectorAll(`.tag_${tag}`).forEach(
-            tag => {tag.style.fontWeight = 'bold';}
-        );
+        select(`.tag_${tag}`).forEach(tag => tag.style.fontWeight = 'bold');
     });
 }
 
 // Return true if every item tagged with tag2 is also tagged with tag1.
 function isSuperset(tag1, tag2) {
-    return Array.from(document.querySelectorAll('li')).every(item => {
-        const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
+    return select('li').every(item => {
+        const tags = tagsFor(item);
         return !tags.includes(tag2) || tags.includes(tag1);
     });
 }
 
 function resetSelection() {
-    // Show hidden items.
-    document.querySelectorAll('li').forEach(item => {
-        if (item.style.display == 'none') {
-            item.style.display = 'initial';
-        }
-    });
-
-    // De-emphasize bolded tags and sites.
-    document.querySelectorAll('.tag').forEach(tag => {
-        if (tag.style.fontWeight == 'bold') {
-            tag.style.fontWeight = 'normal';
-        }
-    });
-
-    document.querySelectorAll('.site').forEach(site => {
-        site.style.fontWeight = 'normal';
-    });
+    select('li').forEach(item => item.style.display = ''); // show hidden
+    select('.tag').forEach(item => item.style.fontWeight = ''); // de-emphasize
+    select('.site').forEach(site => site.style.fontWeight = '');
 }
 
 function filterBySite(requested) {
     const siteString = `(${requested})`;
-    const items = document.querySelectorAll('li');
-    items.forEach(item => {
-        const linkSite = Array.from(item.getElementsByClassName('site')).map(x => x.textContent);
-        if (linkSite != siteString) {
-            item.style.display = 'none';
-        }
+    select('li').forEach(item => {
+        const isSite = item.querySelector('.site')?.textContent === siteString;
+        item.style.display = isSite ? '' : 'none';
     });
 
-    document.querySelectorAll('.site').forEach(site => {
-        site.style.fontWeight = 'bold';
-    });
+    select('.site').forEach(site => site.style.fontWeight = 'bold');
 }
 
 // Navigate to a version of current page with new params.
 // Use pushState to not trigger a page reload and keep things responsive.
 function apply(params) {
     const currentUrl = window.location.href.split('#')[0].split('?')[0];
-    if (params.keys().next().done) {
-        window.history.pushState({}, "", `${currentUrl}${window.location.hash}`);
-    } else {
-        window.history.pushState({}, "", `${currentUrl}?${params.toString()}${window.location.hash}`);
-    }
+    const newUrl = params.size ? `${currentUrl}?${params.toString()}${window.location.hash}` : `${currentUrl}${window.location.hash}`;
+    window.history.pushState({}, "", newUrl);
     processParams()
 }
 
 function toggleTag(tag) {
-    let urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has("tags")) {
-        urlParams.set("tags", tag);
-    } else {
-        const tags = urlParams.get("tags");
-        let current = tags.split(' ');
-        const filtered = current.filter(a => { return a != tag; });
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentTags = urlParams.get("tags")?.split(' ') || [];
 
-        if (filtered.length == current.length) {
-            // Remove supersets of new tag from selection, having them
-            // selected does not change the view.
-
-            // Also remove subsets of the new tag, if the user is selecting a
-            // superset tag, having a subset selected would not change the
-            // current view, so assume the user wants it gone.
-            current = current.filter(a => {
-                return !isSuperset(a, tag) && !isSuperset(tag, a);
-            });
-            current.push(tag);
-            const tags = current.join(" ");
-
-            // Tag isn't requested yet, add it to list.
-            urlParams.set("tags", tags);
-        } else if (filtered.length == 0) {
-            // Tag was the only tag, remove the whole parameter.
-            urlParams.delete("tags");
+    if (currentTags.includes(tag)) {
+        // Remove tag.
+        const newTags = currentTags.filter(t => t !== tag);
+        if (newTags.length) {
+            urlParams.set("tags", newTags.join(" "));
         } else {
-            // Tag was part of a multi-tag query, drop to the remaining other tags.
-            urlParams.set("tags", filtered.join(" "));
+            urlParams.delete("tags");
         }
+    } else {
+        // Remove supersets of new tag from selection, having them
+        // selected does not change the view.
+
+        // Also remove subsets of the new tag, if the user is selecting a
+        // superset tag, having a subset selected would not change the
+        // current view, so assume the user wants it gone.
+        let newTags = currentTags.filter(t => !isSuperset(t, tag) && !isSuperset(tag, t));
+        newTags.push(tag);
+        urlParams.set("tags", newTags.join(" "));
     }
 
     apply(urlParams);
@@ -115,14 +80,11 @@ function toggleTag(tag) {
 
 function toggleSite(site) {
     let urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has("site")) {
-        urlParams.set("site", site);
-    } else if (urlParams.get("site") == site) {
+    if (urlParams.get("site") === site) {
         urlParams.delete("site");
     } else {
         urlParams.set("site", site);
     }
-
     apply(urlParams);
 }
 
@@ -137,13 +99,8 @@ function processParams() {
     }
 }
 
-window.onload = function() {
-    processParams();
-}
-
-window.addEventListener("popstate", (event) => {
-    processParams();
-});
+window.addEventListener("load", processParams);
+window.addEventListener("popstate", processParams);
 </script>{% endblock header %}
 
 {% block title %}{{ title }}{% endblock %}
