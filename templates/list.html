@@ -5,8 +5,7 @@ const tagsFor = item => Array.from(item.querySelectorAll('.tag')).map(tag => tag
 const select = selector => Array.from(document.querySelectorAll(selector));
 
 function filterByTag(requested) {
-    const items = document.querySelectorAll('li');
-    items.forEach(item => {
+    select('li').forEach(item => {
         const tags = tagsFor(item);
         const show = requested.every(tag => tags.includes(tag));
         item.style.display = show ? '' : 'none';
