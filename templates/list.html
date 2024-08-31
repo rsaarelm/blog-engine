@@ -22,17 +22,12 @@ function filterByTag(requested) {
     });
 }
 
-// Return if tag1 is a superset of tag2, ie. every item tagged with tag2 is
-// also tagged with tag1
+// Return true if every item tagged with tag2 is also tagged with tag1.
 function isSuperset(tag1, tag2) {
-    const items = document.querySelectorAll('li');
-    for (let i = 0; i < items.length; i++) {
-        const tags = Array.from(items[i].getElementsByClassName('tag')).map(x => x.textContent);
-        if (tags.includes(tag2) && !tags.includes(tag1)) {
-            return false;
-        }
-    }
-    return true;
+    return Array.from(document.querySelectorAll('li')).every(item => {
+        const tags = Array.from(item.getElementsByClassName('tag')).map(x => x.textContent);
+        return !tags.includes(tag2) || tags.includes(tag1);
+    });
 }
 
 function resetSelection() {
