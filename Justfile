@@ -11,7 +11,7 @@ branch := env_var_or_default('BRANCH', 'gh-pages')
 # Build sources into static website in ./public_html/
 build source='./site/':
     rm -rf public_html/
-    cargo run -- --source {{source}}
+    cargo run --release -- --source {{source}}
 
 # Run a local webserver to test the site.
 serve source='./site/': (build source)
@@ -28,7 +28,7 @@ publish source='./site/':
     #!/bin/sh
 
     DIR=$(mktemp -d)
-    cargo run -- --source {{source}} --output $DIR
+    cargo run --release -- --source {{source}} --output $DIR
     cd $DIR/ > /dev/null
     git init --initial-branch={{branch}}
     git add .
