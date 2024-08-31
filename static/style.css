@@ -1,8 +1,8 @@
-@font-face { font-family: 'Go Mono'; src: url('./Go-Mono.ttf') format('truetype'); }
-@font-face { font-family: 'Go Sans'; src: url('./Go-Regular.ttf') format('truetype'); }
+@font-face { font-family: 'Source Code Pro'; src: url('./SourceCodePro-Regular.ttf.woff2') format('woff2'); }
+@font-face { font-family: 'Source Sans Pro'; src: url('./SourceSans3-Regular.ttf.woff2') format('woff2'); }
 
 code {
-    font-family: "Go Mono", monospace;
+    font-family: "Source Code Pro", monospace;
     font-size: 0.8rem;
 }
 pre {
@@ -28,7 +28,7 @@ header { text-align: center; }
 ul { list-style: circle; padding-inline-start: 1em; }
 body {
     background-color: #DDD;
-    font-family: "Go Sans", sans-serif;
+    font-family: "Source Sans Pro", sans-serif;
     max-width: 40rem;
     margin: 0 auto;
     float: none;
