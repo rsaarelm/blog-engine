@@ -109,8 +109,8 @@ window.addEventListener("popstate", processParams);
 <h1 class="title">{{ title }}</h1>
 
 <ul class="links">{% for item in items %}
-    <li style="margin-bottom:4px" class="link_item" id="{{ item.id }}">
-        {% if item.is_archived %}<span title="archived dead link">𝔄</span>{% endif %}
+    <li class="link_item" id="{{ item.id }}">
+        {% if item.is_archived %}<span title="dead">𝔄</span>{% endif %}
         <a href="{{ item.url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>{{ item.title }}</a>
         {% for seq_url in item.sequence %}
         &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>[{{ loop.index + 1 }}]</a>

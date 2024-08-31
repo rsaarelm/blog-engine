@@ -51,7 +51,7 @@ blockquote {
 .tag { color: brown; font-size: smaller; }
 .tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
-.link_item { list-style-type: none; }
+.link_item { list-style-type: none; margin-bottom: 4px; }
 .links { padding: 0; }
 .preview { margin-left: 1em; font-size: smaller; }
 .outline {
