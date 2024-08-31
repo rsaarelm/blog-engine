@@ -16,7 +16,7 @@ function filterByTag(requested) {
 
     // Emphasize selected tags.
     requested.forEach(tag => {
-        document.querySelectorAll('.tag_' + tag).forEach(
+        document.querySelectorAll(`.tag_${tag}`).forEach(
             tag => {tag.style.fontWeight = 'bold';}
         );
     });
@@ -51,7 +51,7 @@ function resetSelection() {
 }
 
 function filterBySite(requested) {
-    const siteString = "(" + requested + ")";
+    const siteString = `(${requested})`;
     const items = document.querySelectorAll('li');
     items.forEach(item => {
         const linkSite = Array.from(item.getElementsByClassName('site')).map(x => x.textContent);
@@ -70,9 +70,9 @@ function filterBySite(requested) {
 function apply(params) {
     const currentUrl = window.location.href.split('#')[0].split('?')[0];
     if (params.keys().next().done) {
-        window.history.pushState({}, "", currentUrl + window.location.hash);
+        window.history.pushState({}, "", `${currentUrl}${window.location.hash}`);
     } else {
-        window.history.pushState({}, "", currentUrl + "?" + params.toString() + window.location.hash);
+        window.history.pushState({}, "", `${currentUrl}?${params.toString()}${window.location.hash}`);
     }
     processParams()
 }
