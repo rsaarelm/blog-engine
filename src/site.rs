@@ -62,7 +62,7 @@ impl From<input::Site> for Site {
         let index = List::new(
             &site.settings.site_name,
             "feed.xml",
-            posts.iter().map(|(_, post)| Item::new_post(post)),
+            posts.values().map(Item::new_post),
         );
 
         let mut links = List::new(

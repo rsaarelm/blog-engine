@@ -80,7 +80,7 @@ impl From<&Post> for FeedEntry {
     fn from(value: &Post) -> Self {
         FeedEntry {
             title: value.title.clone(),
-            link: format!("{}", value.url),
+            link: value.url.to_string(),
             updated: value.feed_date.clone(),
             content: "".to_owned(),
         }

@@ -91,11 +91,7 @@ impl Item {
         let canonical_url = util::canonical_url(&data.uri);
         let is_archived = canonical_url != data.uri;
 
-        let site = if let Some(site) = util::extract_site(&canonical_url) {
-            site
-        } else {
-            String::new()
-        };
+        let site = util::extract_site(&canonical_url).unwrap_or_default();
 
         let mut url = data.uri.clone();
         let mut original = String::new();

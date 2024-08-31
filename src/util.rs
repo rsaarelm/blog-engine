@@ -46,7 +46,7 @@ impl Outline {
             output: &mut Vec<(&'a str, Vec<&'a str>)>,
         ) {
             for ((head,), body) in &outline.0 {
-                output.push((&head, prefix.clone()));
+                output.push((head, prefix.clone()));
 
                 let mut new_prefix = prefix.clone();
                 new_prefix.push(head);
@@ -247,9 +247,8 @@ pub fn extract_site(url: &str) -> Option<String> {
     let Ok(url) = Url::parse(url) else {
         return None;
     };
-    let Some(domain) = url.domain() else {
-        return None;
-    };
+
+    let domain = url.domain()?;
 
     // Because the internet is cursed, we need to use the TLD database library
     // to split apart domains.
