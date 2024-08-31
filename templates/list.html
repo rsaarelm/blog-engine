@@ -98,7 +98,29 @@ function processParams() {
     }
 }
 
-window.addEventListener("load", processParams);
+function clickify() {
+    select('a.site').forEach(link => {
+        const site = link.textContent.slice(1, -1);
+        link.onclick = function(event) {
+            event.preventDefault();
+            toggleSite(site);
+        };
+    });
+
+    select('a.tag').forEach(link => {
+        const tag = link.textContent;
+        link.onclick = function(event) {
+            event.preventDefault();
+            toggleTag(tag);
+        };
+    });
+}
+
+window.addEventListener("load", event => {
+    processParams();
+    clickify();
+});
+
 window.addEventListener("popstate", processParams);
 </script>{% endblock header %}
 
@@ -115,9 +137,9 @@ window.addEventListener("popstate", processParams);
         &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}target="_blank"{% endif %}>[{{ loop.index + 1 }}]</a>
         {% endfor %}
         {% if !item.original.is_empty() %}<a href="{{ item.original|e }}" target="_blank">🔒</a>{% endif %}
-        {% if item.is_external() %}<a class="site" onclick="toggleSite('{{ item.site }}'); return false" href="?site={{ item.site }}">({{ item.site }})</a>{% endif %}
+        {% if item.is_external() %}<a class="site" href="?site={{ item.site }}">({{ item.site }})</a>{% endif %}
         <br/>
-        <a class="status" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<a class="tag tag_{{ tag }}" onclick="toggleTag('{{ tag }}'); return false" href="?tags={{ tag }}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
+        <a class="status" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<a class="tag tag_{{ tag }}" href="?tags={{ tag }}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
         <div class="preview">{{ item.preview|e("none") }}</div>
     </li>{% endfor %}
 </ul>
