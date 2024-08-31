@@ -82,7 +82,9 @@ impl Item {
         let mut title = title.to_owned();
 
         // Mark PDF links
-        if data.uri.ends_with(".pdf") && (!title.ends_with(".pdf") && !title.ends_with(" (pdf)")) {
+        let file_looks_like_pdf = data.uri.ends_with(".pdf")
+            || data.mirror.as_ref().map_or(false, |a| a.ends_with(".pdf"));
+        if file_looks_like_pdf && (!title.ends_with(".pdf") && !title.ends_with(" (pdf)")) {
             title.push_str(" (pdf)");
         }
 
