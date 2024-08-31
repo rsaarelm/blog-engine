@@ -73,7 +73,16 @@ impl From<input::Site> for Site {
             }),
         );
 
+        let mut seen_links: BTreeSet<String> = Default::default();
         for link in links.items.iter_mut() {
+            // Check for duplicate links
+            if !link.url.is_empty() {
+                if seen_links.contains(&link.url) {
+                    eprintln!("Duplicate link URL: {}", link.url);
+                }
+                seen_links.insert(link.url.clone());
+            }
+
             util::add_topics(&mut link.tags, &topics);
         }
 
