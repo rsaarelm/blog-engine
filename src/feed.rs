@@ -64,7 +64,7 @@ impl From<&Item> for FeedEntry {
             link: value.home_url.clone(),
             updated: value.feed_date.clone(),
             content: format!(
-                "<a href='{}'>{}</a> ({})<br/>{} {}",
+                "<![CDATA[ <p><a href='{}'>{}</a> ({})</p><p>{} {}</p> ]]>",
                 value.url,
                 value.title,
                 value.site,
