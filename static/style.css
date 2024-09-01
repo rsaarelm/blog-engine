@@ -1,8 +1,8 @@
-@font-face { font-family: 'Source Code Pro'; src: url('./SourceCodePro-Regular.ttf.woff2') format('woff2'); }
-@font-face { font-family: 'Source Sans Pro'; src: url('./SourceSans3-Regular.ttf.woff2') format('woff2'); }
+@font-face { font-family: 'Intel One Mono'; src: url('./IntelOneMono-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'Clear Sans'; src: url('./ClearSans-Regular.woff') format('woff'); }
 
 code {
-    font-family: "Source Code Pro", monospace;
+    font-family: "Intel One Mono", monospace;
     font-size: 0.8rem;
 }
 pre {
@@ -28,7 +28,7 @@ header { text-align: center; }
 ul { list-style: circle; padding-inline-start: 1em; }
 body {
     background-color: #DDD;
-    font-family: "Source Sans Pro", sans-serif;
+    font-family: "Clear Sans", sans-serif;
     max-width: 40rem;
     margin: 0 auto;
     float: none;
