@@ -90,7 +90,7 @@ impl From<input::Site> for Site {
             &site.settings.base_url,
             &site.settings.site_name,
             &site.settings.author,
-            "feed.xml",
+            &format!("{}feed.xml", site.settings.base_url),
             posts.values(),
         );
 
@@ -98,7 +98,7 @@ impl From<input::Site> for Site {
             &format!("{}links", site.settings.base_url),
             &format!("{}: Bookmarks", site.settings.site_name),
             &site.settings.author,
-            "feed-links.xml",
+            &format!("{}feed-links.xml", site.settings.base_url),
             &links.items,
         );
 

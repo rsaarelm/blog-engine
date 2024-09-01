@@ -20,7 +20,7 @@ impl Feed {
         base_url: &str,
         title: &str,
         author: &str,
-        filename: &str,
+        feed_url: &str,
         entries: impl IntoIterator<Item = T>,
     ) -> Self {
         let mut entries: Vec<FeedEntry> = entries.into_iter().map(Into::into).collect();
@@ -37,14 +37,13 @@ impl Feed {
             .unwrap_or(util::EPOCH.to_owned());
 
         let link = base_url.to_owned();
-        let feed_link = format!("{link}{filename}");
 
         Feed {
             title: title.into(),
             author: author.into(),
             updated,
             link,
-            feed_link,
+            feed_link: feed_url.to_owned(),
             entries,
         }
     }
