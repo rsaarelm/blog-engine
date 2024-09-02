@@ -92,7 +92,3 @@ blockquote {
 
 .link_item p { margin: 0; margin-bottom: 2px; }
 p.preview { margin: initial; }
-
-.pixels {
-    image-rendering: pixelated;
-}
