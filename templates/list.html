@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block header %}<script type="module">
+{% block header %}<link href="{{ feed_path }}" type="application/atom+xml" rel="alternate"/>
+<script type="module">
 import { processParams, clickify } from "./view.js";
 
 window.addEventListener("load", event => {
