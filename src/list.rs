@@ -7,6 +7,8 @@ use crate::{input, util, Post};
 #[template(path = "list.html")]
 pub struct List {
     pub title: String,
+    /// Identifier for template to deactivate banner link to this list.
+    pub id: String,
     pub feed_path: String,
     pub items: Vec<Item>,
 }
@@ -14,6 +16,7 @@ pub struct List {
 impl List {
     pub fn new(
         title: impl Into<String>,
+        id: impl Into<String>,
         feed_path: impl Into<String>,
         items: impl IntoIterator<Item = Item>,
     ) -> Self {
@@ -22,6 +25,7 @@ impl List {
 
         List {
             title: title.into(),
+            id: id.into(),
             feed_path: feed_path.into(),
             items,
         }

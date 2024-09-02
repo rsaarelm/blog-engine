@@ -72,6 +72,7 @@ blockquote {
     padding-right: 1em;
 }
 .status { color: gray; font-size: smaller; }
+.banner-here { color: gray; }
 .date { color: gray; }
 .site { color: gray; font-size: smaller; }
 .site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }

@@ -12,7 +12,8 @@
 <body>
     <div id='main'>
     <header>
-        <a href=".">posts</a> | <a href="links">links</a>
+        {% if id == "posts" %}<span class="banner-here">posts</span>{% else %}<a href=".">posts</a>{% endif %}
+        | {% if id == "links" %}<spacn class="banner-here">links</span>{% else %}<a href="links">links</a>{% endif %}
     </header>
     <div id='content'>
         {% block content %} {% endblock %}

@@ -61,12 +61,14 @@ impl From<input::Site> for Site {
 
         let index = List::new(
             &site.settings.site_name,
+            "posts",
             "feed.xml",
             posts.values().map(Item::new_post),
         );
 
         let mut links = List::new(
             format!("{}: Bookmarks", site.settings.site_name),
+            "links",
             "feed-links.xml",
             site.links.iter().map(|(title, ((data,), content))| {
                 Item::new_bookmark(&site.settings, title, data, content)
@@ -116,6 +118,8 @@ impl From<input::Site> for Site {
 #[template(path = "post.html")]
 pub struct Post {
     pub url: String,
+    /// Only used for lists, always empty for posts.
+    pub id: String,
     pub slug: String,
     pub title: String,
     pub date: String,
@@ -134,6 +138,7 @@ impl Post {
     ) -> Self {
         Post {
             url: format!("{}{}", settings.base_url, slug),
+            id: Default::default(),
             slug: slug.to_string(),
             // Generate a title from the slug if not specified.
             title: if data.title.is_empty() {
