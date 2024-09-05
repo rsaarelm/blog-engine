@@ -33,6 +33,7 @@
 
 code {
     font-family: "Intel One Mono", monospace;
+    color: darkslategray;
 }
 pre {
     margin-left: 1em;
