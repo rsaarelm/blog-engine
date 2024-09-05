@@ -1,4 +1,7 @@
-@font-face { font-family: 'Intel One Mono'; src: url('./IntelOneMono-Regular.woff2') format('woff2'); }
+@font-face {
+    font-family: 'Intel One Mono';
+    src: url('./IntelOneMono-Regular.woff2') format('woff2');
+}
 
 @font-face {
     font-family: 'Clear Sans';
@@ -30,12 +33,12 @@
 
 code {
     font-family: "Intel One Mono", monospace;
-    font-size: 0.8rem;
 }
 pre {
     margin-left: 1em;
     max-width: 100%;
     overflow-x: auto;
+    font-size: 0.8rem;
 }
 
 a { text-decoration: none; }
