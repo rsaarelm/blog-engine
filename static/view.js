@@ -22,6 +22,13 @@ function isSuperset(tag1, tag2) {
     });
 }
 
+function isDisjoint(tag1, tag2) {
+    return select('li').every(item => {
+        const tags = tagsFor(item);
+        return !tags.includes(tag2) || !tags.includes(tag1);
+    });
+}
+
 function resetSelection() {
     select('li').forEach(item => item.style.display = ''); // show hidden
     select('.tag').forEach(item => item.style.fontWeight = ''); // de-emphasize
@@ -66,7 +73,8 @@ function toggleTag(tag) {
         // Also remove subsets of the new tag, if the user is selecting a
         // superset tag, having a subset selected would not change the
         // current view, so assume the user wants it gone.
-        let newTags = currentTags.filter(t => !isSuperset(t, tag) && !isSuperset(tag, t));
+        let newTags = currentTags.filter(t =>
+            !isSuperset(t, tag) && !isSuperset(tag, t) && !isDisjoint(tag, t));
         newTags.push(tag);
         urlParams.set("tags", newTags.join(" "));
     }
