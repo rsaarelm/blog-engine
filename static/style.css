@@ -33,7 +33,7 @@
 
 #page-layout {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: 1fr minmax(min-content, 40rem) 1fr;
     grid-template-rows: auto auto;
     float: none;
     margin: 0;
@@ -42,7 +42,6 @@
 
 #page-layout header {
     background-color: white;
-    max-width: 40rem;
     grid-column: 2;
     grid-row: 1;
     float: none;
@@ -52,7 +51,6 @@
 
 #page-layout main {
     background-color: white;
-    max-width: 40rem;
     grid-column: 2;
     grid-row: 2;
     float: none;
