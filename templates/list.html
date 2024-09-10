@@ -13,10 +13,8 @@ window.addEventListener("popstate", processParams);
 </script>{% endblock header %}
 
 {% block title %}{{ title }}{% endblock %}
-
+{% block banner %}<h1 class="title">{{ title }}</h1>{% endblock %}
 {% block content %}
-<h1 class="title">{{ title }}</h1>
-
 <ul class="links">{% for item in items %}
     <li class="link_item" id="{{ item.id }}">
         <p>{% if item.is_archived %}<span title="dead">𝔄</span>{% endif %}
@@ -30,7 +28,6 @@ window.addEventListener("popstate", processParams);
         {% if !item.preview.is_empty() %}<div class="preview">{{ item.preview|e("none") }}</div>{% endif %}
     </li>{% endfor %}
 </ul>
-
 {% endblock content %}
 
 {% block feed %}<a type="application/atom+xml" rel="alternate" href="{{ feed_path }}"><img height="15" src="feed.svg" alt="Atom feed"></a>{% endblock %}

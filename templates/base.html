@@ -5,25 +5,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
-  {% block header %} {% endblock %}
+  {% block header %}{% endblock %}
   <title> {% block title %} EXAMPLE blog {% endblock %} </title>
 </head>
 
 <body>
-    <div id='main'>
+    <div id='page-layout'>
     <header>
         {% if id == "posts" %}<span class="banner-here">posts</span>{% else %}<a href=".">posts</a>{% endif %}
-        | {% if id == "links" %}<spacn class="banner-here">links</span>{% else %}<a href="links">links</a>{% endif %}
+        | {% if id == "links" %}<span class="banner-here">links</span>{% else %}<a href="links">links</a>{% endif %}
+    {% block banner %}{% endblock %}
     </header>
-    <div id='content'>
-        {% block content %} {% endblock %}
-    </div>
-
+    <main>
+    {% block content %}{% endblock %}
     <div id='footer'>
         {% block feed %}{% endblock %}
         <a href="https://github.com/rsaarelm/blog-engine/"><img height="15" src="git.svg" alt="site generator repository"></a>
         <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="by-nc-sa.svg" alt="cc-by-sa"></a>
     </div>
+    </main>
+    <aside>{% block sidebar %}{% endblock %}</aside>
 
     </div>
 </body>

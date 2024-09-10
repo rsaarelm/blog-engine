@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %} {{ title }} {% endblock title %}
-
+{% block title %} {{ title }} {% endblock %}
+{% block banner %}<h1 class="title">{{ title }}</h1>{% endblock %}
 {% block content %}
-<h1 class="title">{{ title }}</h1>
 
 <div><span class="status">{{ date }}{% if updated != "" %} - {{ updated }}{% endif %} |</span>
     {% for tag in tags %}<a class="tag" href=".?tags={{tag}}">{{ tag }}</a>{% if !loop.last %}<span class="status">, </span>{% endif %}{% endfor %}
