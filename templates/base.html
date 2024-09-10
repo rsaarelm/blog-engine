@@ -14,8 +14,8 @@
 <body>
     <div id='page-layout'>
     <header>
-        {% if id == "posts" %}<span class="banner-here">posts</span>{% else %}<a href=".">posts</a>{% endif %}
-        | {% if id == "links" %}<span class="banner-here">links</span>{% else %}<a href="links">links</a>{% endif %}
+        <a {% if id == "posts" %}id="banner-here"{% endif %}href=".">posts</a>
+        | <a {% if id == "links" %}id="banner-here"{% endif %}href="links">links</a>
     {% block banner %}{% endblock %}
     </header>
     <main>

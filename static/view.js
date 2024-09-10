@@ -101,6 +101,17 @@ export function processParams() {
     if (urlParams.has("site")) {
         filterBySite(urlParams.get("site"));
     }
+
+    // If we're at root level (no selection params), grey out the nav bar link
+    // for this page.
+    const anchorElement = document.getElementById('banner-here');
+    if (anchorElement) {
+        if (!window.location.search) {
+            anchorElement.className = "inactive";
+        } else {
+            anchorElement.className = "";
+        }
+    }
 }
 
 export function clickify() {
