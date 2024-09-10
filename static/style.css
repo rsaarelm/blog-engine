@@ -118,10 +118,12 @@ a.inactive:hover { text-decoration: none; }
 .site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
 .tag { color: brown; }
-.tagrank_0 { font-size: 0.8em; }
-.tagrank_1 { font-size: 1.2em; }
-.tagrank_2 { font-size: 1.4em; }
-.tagrank_3 { font-size: 1.6em; }
+
+.tagrank_0 { color: #988; font-size: 0.8em; }
+.tagrank_1 { color: brown; font-size: 0.8em; }
+.tagrank_2 { color: brown; }
+.tagrank_3 { color: tomato; }
+
 .tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
 .link_item { list-style-type: none; margin-bottom: 4px; }
