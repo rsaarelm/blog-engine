@@ -63,6 +63,7 @@
     grid-column: 3;
     grid-row: 2;
     padding-left: 1em;
+    padding-right: 1em;
 }
 
 code {
