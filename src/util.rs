@@ -352,8 +352,7 @@ pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<Str
 
 #[derive(Debug)]
 pub struct Tag {
-    pub link_name: String,
-    pub print_name: String,
+    pub name: String,
     pub absolute_count: usize,
     pub relative_rank: usize,
 }
@@ -384,9 +383,7 @@ pub fn build_tag_list<'a>(items: impl Iterator<Item = &'a [String]>) -> Vec<Tag>
         };
 
         ret.push(Tag {
-            link_name: t.to_string(),
-            // Non-breaking hyphens for printed tags
-            print_name: t.replace("-", "\u{2011}"),
+            name: t.to_string(),
             absolute_count: *n,
             relative_rank,
         });

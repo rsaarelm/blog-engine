@@ -32,7 +32,7 @@ window.addEventListener("popstate", processParams);
 
 {% block sidebar %}
 <p class="tagcloud">{% for tagdata in tags %}
-<a class="tag tag_{{ tagdata.link_name }} tagrank_{{ tagdata.relative_rank }}" href="?tags={{ tagdata.link_name }}">{{ tagdata.print_name }}</a>
+<nobr><a class="tag tag_{{ tagdata.name }} tagrank_{{ tagdata.relative_rank }}" href="?tags={{ tagdata.name }}">{{ tagdata.name }}</a></nobr>
 {% endfor %}
 </p>
 {% endblock sidebar %}
