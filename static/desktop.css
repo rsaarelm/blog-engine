@@ -1,0 +1,7 @@
+#page-layout aside {
+    max-width: 20rem;
+    grid-column: 3;
+    grid-row: 2;
+    padding-left: 1em;
+}
+

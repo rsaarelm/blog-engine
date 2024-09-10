@@ -350,6 +350,51 @@ pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<Str
     *tags = new_tags;
 }
 
+#[derive(Debug)]
+pub struct Tag {
+    pub link_name: String,
+    pub print_name: String,
+    pub absolute_count: usize,
+    pub relative_rank: usize,
+}
+
+pub fn build_tag_list<'a>(items: impl Iterator<Item = &'a [String]>) -> Vec<Tag> {
+    let mut tags: BTreeMap<&'a String, usize> = Default::default();
+    for x in items.into_iter() {
+        for y in x {
+            *tags.entry(y).or_default() += 1;
+        }
+    }
+
+    if tags.is_empty() {
+        return Default::default();
+    }
+
+    let (min, max) = (tags.values().min().unwrap(), tags.values().max().unwrap());
+    let mut ret = Vec::new();
+
+    for (t, n) in &tags {
+        // Map tag prevalence to [0, 1].
+        let a = (n - min) as f32 / (max - min + 1) as f32;
+        let relative_rank = match a {
+            a if a < 0.1 => 0,
+            a if a < 0.5 => 1,
+            a if a < 0.8 => 2,
+            _ => 3,
+        };
+
+        ret.push(Tag {
+            link_name: t.to_string(),
+            // Non-breaking hyphens for printed tags
+            print_name: t.replace("-", "\u{2011}"),
+            absolute_count: *n,
+            relative_rank,
+        });
+    }
+
+    ret
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

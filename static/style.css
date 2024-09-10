@@ -61,6 +61,7 @@
 }
 
 #page-layout aside {
+    max-width: 30rem;
     grid-column: 3;
     grid-row: 2;
     padding-left: 1em;
@@ -115,6 +116,10 @@ blockquote {
 .site:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
 .tag { color: brown; }
+.tagrank_0 { font-size: 0.8em; }
+.tagrank_1 { font-size: 1.2em; }
+.tagrank_2 { font-size: 1.4em; }
+.tagrank_3 { font-size: 1.6em; }
 .tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
 .link_item { list-style-type: none; margin-bottom: 4px; }
@@ -129,3 +134,5 @@ blockquote {
 
 .link_item p { margin: 0; margin-bottom: 2px; }
 p.preview { margin: initial; }
+
+.tagcloud { text-align: justify }

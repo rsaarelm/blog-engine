@@ -30,4 +30,11 @@ window.addEventListener("popstate", processParams);
 </ul>
 {% endblock content %}
 
+{% block sidebar %}
+<p class="tagcloud">{% for tagdata in tags %}
+<a class="tag tag_{{ tagdata.link_name }} tagrank_{{ tagdata.relative_rank }}" href="?tags={{ tagdata.link_name }}">{{ tagdata.print_name }}</a>
+{% endfor %}
+</p>
+{% endblock sidebar %}
+
 {% block feed %}<a type="application/atom+xml" rel="alternate" href="{{ feed_path }}"><img height="15" src="feed.svg" alt="Atom feed"></a>{% endblock %}

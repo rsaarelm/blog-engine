@@ -1,7 +1,11 @@
 use askama::Template;
 use serde_with::SerializeDisplay;
 
-use crate::{input, util, Post};
+use crate::{
+    input,
+    util::{self, Tag},
+    Post,
+};
 
 #[derive(Default, Debug, Template, SerializeDisplay)]
 #[template(path = "list.html")]
@@ -11,6 +15,8 @@ pub struct List {
     pub id: String,
     pub feed_path: String,
     pub items: Vec<Item>,
+    /// Tag cloud.
+    pub tags: Vec<Tag>,
 }
 
 impl List {
@@ -23,11 +29,14 @@ impl List {
         let mut items: Vec<Item> = items.into_iter().collect();
         items.sort_by(|a, b| b.date.cmp(&a.date));
 
+        let tags = util::build_tag_list(items.iter().map(|a| a.tags.as_ref()));
+
         List {
             title: title.into(),
             id: id.into(),
             feed_path: feed_path.into(),
             items,
+            tags,
         }
     }
 }
