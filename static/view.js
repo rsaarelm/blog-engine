@@ -105,7 +105,9 @@ export function clickify() {
     });
 
     select('a.tag').forEach(link => {
-        const tag = link.textContent;
+        // XXX: Sometimes tags are printed with non-breaking hyphens, these
+        // need to be changed back
+        const tag = link.textContent.replace(/\u2011/g, '-');
         link.onclick = function(event) {
             event.preventDefault();
             toggleTag(tag);
