@@ -103,11 +103,6 @@ blockquote {
   margin: 1em 10px;
   padding: 0em 10px;
 }
-#main {
-    background-color: white;
-    padding-left: 1em;
-    padding-right: 1em;
-}
 .status { color: gray; font-size: smaller; }
 
 .inactive { color: gray; }
@@ -140,3 +135,33 @@ a.inactive:hover { text-decoration: none; }
 p.preview { margin: initial; }
 
 .tagcloud { text-align: justify }
+
+ /* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #222;
+        color: #bbb;
+    }
+
+    code {
+        color: #89a;
+    }
+
+    .tag { color: tomato; }
+
+    .tagrank_0 { color: brown; font-size: 0.8em; }
+    .tagrank_1 { color: tomato; font-size: 0.8em; }
+    .tagrank_2 { color: tomato; }
+    .tagrank_3 { color: lightcoral; }
+
+    #page-layout header {
+        background-color: #111;
+    }
+    #page-layout main {
+        background-color: #111;
+    }
+
+    a {
+        color: #4da6ff;
+    }
+}
