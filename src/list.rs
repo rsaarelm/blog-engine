@@ -1,5 +1,6 @@
 use askama::Template;
 use serde_with::SerializeDisplay;
+use url::Url;
 
 use crate::{
     input,
@@ -113,8 +114,13 @@ impl Item {
             original = url;
             url = mirror.clone();
         } else if site == "doi.org" {
-            original = url;
-            url = format!("https://sci-hub.se/{}", data.uri);
+            if let (Some(bypass), Ok(doi)) = (
+                settings.doi_bypass.as_ref(),
+                Url::parse(&url).map(|a| a.path().trim_start_matches('/').to_owned()),
+            ) {
+                original = url;
+                url = bypass.replace("%s", &doi);
+            }
         }
 
         let id = base64_url::encode(&md5::compute(&canonical_url).0);

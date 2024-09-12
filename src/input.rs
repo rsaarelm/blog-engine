@@ -88,4 +88,12 @@ pub struct Settings {
     pub base_url: String,
     /// Default author for posts.
     pub author: String,
+    /// Bypass link for DOI articles, if any.
+    ///
+    /// The string uses `%s` as a substitution slot. If the value is
+    /// `https://example.com/?doi=%s`, for DOI `doi:10.1112/plms/s2-42.1.230`
+    /// (given as `https://doi.org/10.1112/plms/s2-42.1.230` in the URI field
+    /// of the link) the generated URL would be
+    /// `https://example.com/?doi=10.1112/plms/s2-42.1.230`
+    pub doi_bypass: Option<String>,
 }
