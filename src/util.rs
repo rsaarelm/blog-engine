@@ -280,7 +280,11 @@ pub fn extract_site(url: &str) -> Option<String> {
     ];
 
     // Keep the subdomain if it's this exact one.
-    let keep_specific_subdomain = ["gist.github.com", "groups.google.com"];
+    let keep_specific_subdomain = [
+        "gist.github.com",
+        "groups.google.com",
+        "news.ycombinator.com",
+    ];
 
     let mut domain = if keep_subdomain.contains(&truncated_domain.as_str())
         || keep_specific_subdomain.contains(&domain)
@@ -409,6 +413,11 @@ mod tests {
             ("https://user.blogspot.com/wotsit", "user.blogspot.com"),
             ("https://cambridge.ac.uk/wotsit", "cambridge.ac.uk"),
             ("https://www.cambridge.ac.uk/wotsit", "cambridge.ac.uk"),
+            ("https://www.ycombinator.com/library", "ycombinator.com"),
+            (
+                "https://news.ycombinator.com/item?id=2",
+                "news.ycombinator.com",
+            ),
         ] {
             assert_eq!(extract_site(a).unwrap(), b);
         }
