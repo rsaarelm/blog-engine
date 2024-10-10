@@ -123,7 +123,7 @@ export function clickify() {
         };
     });
 
-    select('a.tag').forEach(link => {
+    select('.link_item a.tag').forEach(link => {
         const tag = link.textContent;
         link.onclick = function(event) {
             event.preventDefault();
