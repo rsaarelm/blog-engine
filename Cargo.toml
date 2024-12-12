@@ -17,7 +17,7 @@ idm = "0.4"
 indexmap = { version = "2", features = ["serde"] }
 lazy-regex = "3"
 md5 = "0.7"
-pulldown-cmark = { version = "0.11", features = ["simd"] }
+pulldown-cmark = { version = "0.12", features = ["simd"] }
 serde = { version = "1", features = ["derive"] }
 serde_with = "3"
 tldextract = "0.6.0"
