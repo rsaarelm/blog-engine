@@ -374,15 +374,17 @@ pub fn build_tag_list<'a>(items: impl Iterator<Item = &'a [String]>) -> Vec<Tag>
     }
 
     let (min, max) = (tags.values().min().unwrap(), tags.values().max().unwrap());
+    let (min, max) = ((*min as f32).ln(), (*max as f32).ln());
     let mut ret = Vec::new();
 
     for (t, n) in &tags {
         // Map tag prevalence to [0, 1].
-        let a = (n - min) as f32 / (max - min + 1) as f32;
+        let x = (*n as f32).ln();
+        let a = (x - min) / (max - min + 1.0);
         let relative_rank = match a {
-            a if a < 0.1 => 0,
+            a if a < 0.2 => 0,
             a if a < 0.5 => 1,
-            a if a < 0.8 => 2,
+            a if a < 0.7 => 2,
             _ => 3,
         };
 

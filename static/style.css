@@ -114,10 +114,10 @@ a.inactive:hover { text-decoration: none; }
 
 .tag { color: brown; }
 
-.tagrank_0 { color: #988; font-size: 0.8em; }
+.tagrank_0 { color: #988; font-size: 0.7em; }
 .tagrank_1 { color: brown; font-size: 0.8em; }
 .tagrank_2 { color: brown; }
-.tagrank_3 { color: tomato; }
+.tagrank_3 { color: brown; font-size: 1.2em; text-transform: uppercase; }
 
 .tag:hover { cursor: pointer; text-decoration: underline; text-decoration-thickness: from-font; }
 
