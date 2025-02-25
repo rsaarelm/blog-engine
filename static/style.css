@@ -165,3 +165,11 @@ p.preview { margin: initial; }
         color: #4da6ff;
     }
 }
+
+/* Special styles for printed pages */
+.prn { display: none; }
+
+@media print {
+  .prn { display: inline; }
+  .scr { display: none; }
+}
