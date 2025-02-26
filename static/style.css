@@ -166,10 +166,15 @@ p.preview { margin: initial; }
     }
 }
 
-/* Special styles for printed pages */
-.prn { display: none; }
-
 @media print {
-  .prn { display: inline; }
-  .scr { display: none; }
+  .screen-only { display: none; }
+
+  a.bookmark::after {
+      content: " ("attr(href)")";
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-wrap: break-word;
+      color: black;
+  }
 }
