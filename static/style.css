@@ -170,7 +170,7 @@ p.preview { margin: initial; }
   .screen-only { display: none; }
 
   a.bookmark::after {
-      content: " ("attr(href)")";
+      content: " <"attr(href)">";
       font-family: monospace;
       white-space: pre-wrap;
       word-break: break-all;
