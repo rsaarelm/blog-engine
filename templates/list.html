@@ -18,11 +18,11 @@ window.addEventListener("popstate", processParams);
 <ul class="links">{% for item in items %}
     <li class="link_item" id="{{ item.id }}">
         <p>{% if item.is_archived %}<span title="dead">𝔄</span>{% endif %}
-        <a href="{{ item.url|e }}" {% if item.is_external() %}class="bookmark" target="_blank"{% endif %}>{{ item.title }}</a>
+        <a href="{{ item.url|e }}" {% if item.is_external() %}{% if item.original.is_empty() %}class="bookmark"{% endif %} target="_blank"{% endif %}>{{ item.title }}</a>
         {% for seq_url in item.sequence %}
         &nbsp;<a href="{{ seq_url|e }}" {% if item.is_external() %}class="bookmark" target="_blank"{% endif %}><span class="screen-only">[{{ loop.index + 1 }}]<span></a>
         {% endfor %}
-        {% if !item.original.is_empty() %}<a href="{{ item.original|e }}" target="_blank">🔒</a>{% endif %}
+        {% if !item.original.is_empty() %}<a href="{{ item.original|e }}" class="bookmark" target="_blank">🔒</a>{% endif %}
         {% if item.is_external() %}<a class="site screen-only" href="?site={{ item.site }}">({{ item.site }})</a>{% endif %}</p>
         <p class="status"><a class="date" href="#{{ item.id }}">{{ item.date }}</a> {% for tag in item.tags %}<a class="tag tag_{{ tag }}" href="?tags={{ tag }}">{{ tag }}</a>{% if !loop.last %}, {% endif %}{% endfor %}</p>
         {% if !item.preview.is_empty() %}<div class="preview">{{ item.preview|e("none") }}</div>{% endif %}
