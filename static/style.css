@@ -136,6 +136,11 @@ p.preview { margin: initial; }
 
 .tagcloud { text-align: justify }
 
+.link_item:target {
+    background-color: wheat;
+    transition: background-color 0.5s ease;
+}
+
  /* Dark mode */
 @media (prefers-color-scheme: dark) {
     body {
