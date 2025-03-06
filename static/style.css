@@ -138,7 +138,6 @@ p.preview { margin: initial; }
 
 .link_item:target {
     background-color: wheat;
-    transition: background-color 0.5s ease;
 }
 
  /* Dark mode */
@@ -168,6 +167,10 @@ p.preview { margin: initial; }
 
     a {
         color: #4da6ff;
+    }
+
+    .link_item:target {
+        background-color: #321;
     }
 }
 
