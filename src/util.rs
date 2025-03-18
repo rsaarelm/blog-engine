@@ -270,6 +270,7 @@ pub fn extract_site(url: &str) -> Option<String> {
         "dreamwidth.org",
         "github.io",
         "ibiblio.org",
+        "livejournal.com",
         "medium.com",
         "neocities.org",
         "rationalsites.com",
