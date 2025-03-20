@@ -104,6 +104,9 @@ impl Item {
 
         let canonical_url = util::canonical_url(&data.uri);
         let is_archived = canonical_url != data.uri;
+        // DOI links that contain tag "open-access" are assumed to be readable
+        // directly from the DOI site and don't need bypass tricks.
+        let is_open_access = data.tags.iter().any(|a| &**a == "open-access");
 
         let site = util::extract_site(&canonical_url).unwrap_or_default();
 
@@ -113,7 +116,7 @@ impl Item {
         if let Some(mirror) = &data.mirror {
             original = url;
             url = mirror.clone();
-        } else if site == "doi.org" {
+        } else if site == "doi.org" && !is_open_access {
             if let (Some(bypass), Ok(doi)) = (
                 settings.doi_bypass.as_ref(),
                 Url::parse(&url).map(|a| a.path().trim_start_matches('/').to_owned()),

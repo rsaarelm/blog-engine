@@ -64,6 +64,14 @@ impl Outline {
 #[derive(Clone, Debug, DeserializeFromStr)]
 pub struct Word(String);
 
+impl std::ops::Deref for Word {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 impl FromStr for Word {
     type Err = anyhow::Error;
 
