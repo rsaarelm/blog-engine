@@ -336,7 +336,7 @@ pub fn extract_site(url: &str) -> Option<String> {
     Some(domain)
 }
 
-pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<String>>) {
+pub fn add_topics(title: &str, tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<String>>) {
     let mut new_tags: Vec<String> = Vec::new();
     let mut redundant: Vec<String> = Vec::new();
     for t in tags.iter() {
@@ -355,7 +355,7 @@ pub fn add_topics(tags: &mut Vec<String>, topics: &BTreeMap<String, BTreeSet<Str
     // XXX: Lints could be printed with log::warn! instead
     if !redundant.is_empty() {
         eprintln!(
-            "List {tags:?} has redundant topic tags: {}",
+            "{title}: Redundant topic tags: {} {tags:?}",
             redundant.join(", ")
         );
     }

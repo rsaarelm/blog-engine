@@ -55,8 +55,8 @@ impl From<input::Site> for Site {
             }
         }
 
-        for (_, post) in posts.iter_mut() {
-            util::add_topics(&mut post.tags, &topics);
+        for (title, post) in posts.iter_mut() {
+            util::add_topics(title, &mut post.tags, &topics);
         }
 
         let index = List::new(
@@ -85,7 +85,7 @@ impl From<input::Site> for Site {
                 seen_links.insert(link.url.clone());
             }
 
-            util::add_topics(&mut link.tags, &topics);
+            util::add_topics(&link.title, &mut link.tags, &topics);
         }
 
         let feed = Feed::new(
