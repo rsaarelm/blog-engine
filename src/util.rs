@@ -314,6 +314,7 @@ pub fn extract_site(url: &str) -> Option<String> {
     // (www.)domain.com/[username] (add segment) style URLs.
     //
     let add_segment = [
+        "buttondown.com",
         "facebook.com",
         "gist.github.com",
         "github.com",
