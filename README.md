@@ -3,7 +3,7 @@
 An opinionated static site generator using
 [IDM](https://github.com/rsaarelm/idm) for structured site data,
 [Markdown](https://daringfireball.net/projects/markdown/) for text syntax and
-[Askama templates](https://github.com/djc/askama) for generating HTML.
+[Askama templates](https://github.com/askama-rs/askama) for generating HTML.
 Currently geared for a personal blog plus a link collection page, you probably
 want to fork this and edit the templates if you want something different.
 
@@ -21,4 +21,4 @@ that your GitHub account name is the same as your login name.
 
 If you want to publish to a different branch and repository, use environment variables:
 
-    REPO=/tmp/my-git BRANCH=master just publich ~/work/website
+    REPO=/tmp/my-git BRANCH=master just publish ~/work/website
