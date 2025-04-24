@@ -24,6 +24,7 @@ serve source='./site/': (build source)
     # started.
     @(trap 'kill 0' SIGINT; caddy run & (find {{source}} ./src ./static/ ./templates/ | entr -s 'just build {{source}}; notify-send rebuilt') )
 
+# Publish site at a static HTML hosting git repository.
 publish source='./site/':
     #!/bin/sh
 
